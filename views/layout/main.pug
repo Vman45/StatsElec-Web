@@ -1,0 +1,20 @@
+doctype html
+html
+    head
+        title !{siteOptions.pageTitle} - StatsElec
+        meta(http-equiv="Content-Type", content="text/html;charset=UTF-8")
+
+    body
+        nav.nav
+            a.title(href="/") StatsElec
+            a(href="/") Accueil
+            a(href="/list") Liste des compteurs
+
+
+        //- Content appended from another pages
+        block content
+
+
+        //- JS files
+        block javascript
+            script(src="/assets/app.js")

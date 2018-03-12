@@ -1,0 +1,34 @@
+extends layout/main
+
+block append content
+    .container
+        section.grid-3.has-gutter
+            div
+                .stat.green
+                    h2 Consommation totale
+                    span.data 4K kWh
+
+            div        
+                .stat.orange
+                    h2 Consommation d'aujourd'hui
+                    span.data 13 kWh
+
+            div
+                .stat.purple
+                    h2 Nombre de compteurs
+                    span.data 1
+
+    
+        h2.margin-25-top Liste des dernières modifications
+        table.table--zebra
+            thead
+                th Identifiant compteur
+                th Dernière métrique reçue
+                th(width="25%") 
+            tbody
+                tr
+                    td 0123301203921
+                    td 
+                        span.tag--primary 09/03/2018 00:00:00
+                    td
+                        a(href="/counter/0") Voir la page du compteur

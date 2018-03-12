@@ -1,0 +1,31 @@
+{
+  "name": "statselec-web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Michael Vieira <contact+dev[at]mvieira[dot]fr>",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "influx": "^5.0.7",
+    "mqtt": "^2.16.0",
+    "pug": "^2.0.0"
+  },
+  "devDependencies": {
+    "chartjs": "^0.3.24",
+    "css-loader": "^0.28.10",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "knacss": "^7.0.3",
+    "mocha": "^5.0.4",
+    "node-sass": "^4.7.2",
+    "sass-loader": "^6.0.7",
+    "style-loader": "^0.20.2",
+    "webpack": "^4.1.1",
+    "webpack-cli": "^2.0.10"
+  }
+}
