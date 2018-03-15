@@ -2,9 +2,23 @@ var express    = require("express"),
     bodyParser = require("body-parser"),
     pug        = require("pug"),
     influx     = require("influx"),
-    mqtt       = require("mqtt"),
-    fs         = require("fs"),
-    app        = express();
+    colors     = require("colors"),
+    app        = express(),
+
+    config;
+
+
+// Try to open the configuration file
+try { config = require(__dirname + "/config/config"); } 
+catch(err) {
+    console.error(colors.red("An error is occured when we tried to open the configuration file. Please check if is exists. Traces :\n", err));
+    process.exit(1);
+}
+
+
+// Create constants for the web server
+const HTTP_BIND = process.env.HOST || config.general.host || "0.0.0.0";
+const HTTP_PORT = process.env.PORT || config.general.port || 8055;
 
 
 // Configure express
@@ -13,24 +27,10 @@ app.set("view engine", "pug");
 app.use("/assets", express.static(__dirname + "/dist"));
 
 
-app.get("/", (req, res) => {
-    res.render("index", {
-        siteOptions: {
-            pageTitle: "Dashboard"
-        }
-    });
-})
+// Initialize MQTT connection and listening for new messages
+require(__dirname + "/core/brokerListener")(config);
+require(__dirname + "/core")(app);
 
-app.get("/counter", (req, res) => {
-    res.render("counter", {
-        siteOptions: {
-            pageTitle: "Compteur 10001002021"
-        }
-    });
-})
 
-app.listen(8088, "localhost", (err) => {
-    if(err) throw err;
-
-    console.log("It's work on port 8088");
-});
+// Start the Web server
+app.listen(HTTP_PORT, HTTP_BIND, (err) => console.log(colors.green("Yey! StatsElec is listening on: http://" + HTTP_BIND + ":" + HTTP_PORT + "/")));

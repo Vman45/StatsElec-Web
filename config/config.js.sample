@@ -1,0 +1,21 @@
+/** 
+ * Fichier de configuration de StatsElec
+ * Note : La configuration de base est adaptée pour l'utilisateur de Docker.
+ */
+
+module.exports = {
+    general: {
+        host: "localhost",      // IP ou nom d'hôte sur laquelle le serveur va écouter
+        port: 8055,             // Port du serveur StatsElec
+        houseName: "maMaison",  // Nom de la maison (doit être identique sur les "probes")
+        metricRetention: 365    // Durée en jour de la rétention des métriques (par défaut: 365 jours)
+    },
+    mqtt: {
+        host: "mqtt",           // IP ou nom d'hôte sur broker MQTT
+        port: 1883              // Port du broker MQTT
+    },
+    influx: {
+        host: "influx",         // IP ou nom d'hôte du serveur InfluxDB
+        database: "statselec"   // Base de données contenant les données (sera créé si elle n'existe pas)
+    }
+}

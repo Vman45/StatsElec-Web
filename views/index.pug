@@ -2,24 +2,29 @@ extends layout/main
 
 block append content
     .container
-        section.grid-3.has-gutter
-            div
-                .stat.green
+        section.grid-4.has-gutter
+            .stat        
+                .body.blue
+                    h2 Consommation du jour
+                    span.data 13 kWh
+            
+            .stat
+                .body.green
+                    h2 Intensité instantanée
+                    span.data 26 A
+
+            .stat
+                .body.orange
                     h2 Consommation totale
                     span.data 4K kWh
 
-            div        
-                .stat.orange
-                    h2 Consommation d'aujourd'hui
-                    span.data 13 kWh
-
-            div
-                .stat.purple
+            .stat
+                .body.purple
                     h2 Nombre de compteurs
                     span.data 1
 
     
-        h2.margin-25-top Liste des dernières modifications
+        h2.margin-25-top Liste des dernières receptions
         table.table--zebra
             thead
                 th Identifiant compteur

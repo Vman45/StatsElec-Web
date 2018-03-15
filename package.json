@@ -11,6 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.18.2",
+    "colors": "^1.2.1",
     "express": "^4.16.2",
     "influx": "^5.0.7",
     "mqtt": "^2.16.0",
