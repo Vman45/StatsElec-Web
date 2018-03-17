@@ -1,11 +1,16 @@
 image: node:latest
 
 before_script:
-  - npm i -g yarn
-  - yarn
+  - npm i
+
+stages:
+  - test
+  - build
 
 tests:
+  stage: test
   script: npm run test
 
 webpack_tests:
+  stage: build
   script: npm run build
