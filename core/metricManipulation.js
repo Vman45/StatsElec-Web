@@ -123,21 +123,27 @@ function detectTICMode(metric) {
 
 
 /**
- * Detect if the counter is a Linky or 
- * @param {Object} metric LPL metric or JSON provided by the probe  
- * @returns {Object} Return an object with the possible counters and the probability
- */
-function detectCounterType(metric) {
-
-}
-
-/**
  * Detect if the installation is single-phase or three-phase
  * @param {Object} metric LPL metric or JSON provided by the probe  
  * @returns {Boolean} Return a boolean if the installation is in three-phase
  */
 function isThreePhases(metric) {
+    var isThreePhase = (key) => {
+        switch(key) {
+            case String(key.match(/IINST\d/)):
+            case String(key.match(/IMAX\d/)):
+                return true;
 
+            default: return false;
+        }
+    }
+
+    // Check if the key numerical or if is a tag
+    if(!isNaN(parseInt(Object.keys(metric)[0]))) {
+
+    } else {
+    
+    }
 }
 
 /**
@@ -154,6 +160,5 @@ module.exports = {
     createElectron,
     verifyChecksum,
     detectTICMode,
-    detectCounterType, 
     contractChanged
 };
