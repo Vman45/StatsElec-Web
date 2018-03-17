@@ -1,0 +1,10 @@
+image: node:latest
+
+before_script:
+  - npm i -g yarn
+
+tests:
+  script: npm run test
+
+webpack_tests:
+  script: npm run build
