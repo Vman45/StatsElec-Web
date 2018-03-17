@@ -2,6 +2,7 @@ image: node:latest
 
 before_script:
   - npm i -g yarn
+  - yarn
 
 tests:
   script: npm run test
