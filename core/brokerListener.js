@@ -3,7 +3,7 @@ var metrics = require("./metricManipulation"),
     colors  = require("colors");
 
 
-module.exports = (config) => {
+module.exports = (config, influx) => {
     console.log(colors.yellow("Trying to connect to MQTT Broker..."));
 
 

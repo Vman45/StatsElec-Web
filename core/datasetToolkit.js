@@ -140,16 +140,20 @@ class Dataset {
         var dataset = JSON.parse(fs.readFileSync(__dirname + `/../datasets/${this.datasetName}.json`));
         var finded = false;
 
-        for(var i = 0; finded != true && i < dataset.data.length; i++) {
-            Object.keys(dataset.data[i]).forEach((objKey) => {
-                if(objKey == key) {
-                    if(dataset.data[i][key] == value) {
-                        finded = true;
-                        cb(null, dataset.data[i]);
+        for(var i = 0; i < dataset.data.length; i++) {
+            if(finded != true) {
+                Object.keys(dataset.data[i]).forEach((objKey) => {
+                    if(objKey == key) {
+                        if(dataset.data[i][key] == value) {
+                            finded = true;
+                            cb(null, dataset.data[i]);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
+
+        if(finded == false) cb(null, null);
     }
 
 

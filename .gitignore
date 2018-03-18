@@ -4,3 +4,4 @@ datasets/
 container_content/
 **.log
 config/config.js
+config/config.*.js

@@ -185,7 +185,6 @@ describe("Test dataset methods", () => {
                     if(errInsert != null) assert.fail();
                     else {
                         ds.findAll("counter_id", "698321458524", (errFind, results) => {
-                            console.log(results)
                             if(errFind != null) assert.fail();
                             else assert.ok(true);
                         });

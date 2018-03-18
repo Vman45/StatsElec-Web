@@ -2,16 +2,11 @@ extends layout/main
 
 block append content
     .container
-        section.grid-4.has-gutter
+        section.grid-3.has-gutter
             .stat        
                 .body.blue
                     h2 Consommation du jour
                     span.data 13 kWh
-            
-            .stat
-                .body.green
-                    h2 Intensité instantanée
-                    span.data 26 A
 
             .stat
                 .body.orange
@@ -21,7 +16,7 @@ block append content
             .stat
                 .body.purple
                     h2 Nombre de compteurs
-                    span.data 1
+                    span.data= data.nbCounters
 
     
         h2.margin-25-top Liste des dernières receptions
