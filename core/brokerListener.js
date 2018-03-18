@@ -1,4 +1,5 @@
 var metrics = require("./metricManipulation"),
+    Dataset = require("./datasetToolkit").Dataset,
     mqtt    = require("mqtt"),
     colors  = require("colors");
 
@@ -39,11 +40,27 @@ module.exports = (config, influx) => {
     // Call the parsing function if a message arrives.
     client.on("message", (topic, message) => {
         if(topic == config.general.houseName + "/counter") {
-            try { 
-                var jsonified = JSON.parse(message);
+            metrics.createElectron(message.toString(), (err, electron) => {
+                if(err != null) console.warn(colors.yellow("This metric is not arrived in conformity. Trace:", err));
+                else {
+                    var dataset = new Dataset("counters");
 
-                readMetric(jsonified);
-            } catch(err) { console.warn(colors.yellow("A metric is arrived but is not in conformity. Received metric:\n", jsonified)); }
+                    if(dataset != Error) {
+                        dataset.find("counterid", electron.fundamental.counterid, (err, result) => {
+                            if(result == null) {
+                                dataset.insert(electron.fundamental, (err, entry) => {
+                                    if(err != null) console.warn(colors.yellow("Unable to create this new counter. Trace:", err));
+                                    else {
+                                        // TODO: loop for adding extras tags from electron to Influx
+                                    }
+                                });
+                            } else {
+                                // TODO: loop for adding extras tags from electron to Influx
+                            }
+                        });
+                    }
+                }
+            });
         }
     });
 }

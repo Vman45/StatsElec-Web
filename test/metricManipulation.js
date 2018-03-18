@@ -86,4 +86,53 @@ describe("Test metric manipulation functions", () => {
             assert.equal(metricManipulation.isThreePhases(tempData), true);
         });
     });
+
+    describe("#detectContractType", () => {
+        it("should return hchp (lpl mode - hchp tag)", () => {
+            var tempData = [
+                [ "ADCO", "256347852365", "<" ],
+                [ "HCHP", "256325874", "M" ]
+            ]
+
+            assert.equal(metricManipulation.detectContractType(tempData), "hchp");
+        });
+
+        it("should return base (organized mode - base tag)", () => {
+            var tempData = {
+                ADCO: "256347852365",
+                BASE: "000006325"
+            }
+
+            assert.equal(metricManipulation.detectContractType(tempData), "base");
+        });
+
+        it("should return unknown (lpl mode - no specific tag)", () => {
+            var tempData = [
+                [ "ADCO", "256347852365", "<" ],
+                [ "BOO", "256325874", "M" ]
+            ]
+
+            assert.equal(metricManipulation.detectContractType(tempData), "unknown");
+        });
+
+        it("should return unknown (organized mode - no specific tag)", () => {
+            var tempData = {
+                ADCO: "256347852365",
+                BOO: "000006325"
+            }
+
+            assert.equal(metricManipulation.detectContractType(tempData), "unknown");
+        });
+    });
+
+    describe("#createElectron", () => {
+        it("should return electron object", () => {
+            var tempData = "ADCO 256325478541 >\nOPTARIF HC.. <\nISOUSC 45 ?\nHCHP 000563248 !\nHCHP 000236587 )\nPTEC HC.. S\nIINST 010 X\nIMAX 090 H\nPAPP 02430 ,\nHHPHC A ,\nMOTDETAT 000000 B";
+
+            metricManipulation.createElectron(tempData, (err, electron) => {
+                if(err != null) assert.fail();
+                else assert.ok(true);
+            });
+        });
+    });
 });

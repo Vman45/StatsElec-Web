@@ -18,29 +18,115 @@ function createElectron(str, cb) {
          * 
          * Surgery variable is... for surgery purposes... She's dedicated to bloody actions so if you can stay away of this variable, is better for you!
         */
-        var electron, surgery
+        var electron = {
+            obj: { fundamental: {}, extras: {} },
+            lpl: []
+        };
         
-        electron.lpl  = str.split("\n");
+        var surgery = [];
+        
+        electron.lpl = str.split("\n");
+        electron.lpl.forEach(line => surgery.push(line.split(" ")));
 
 
         // SURGERY MODE ACTIVATED
-        surgery = str.split("\n");
-
+        electron.lpl = surgery;
         surgery.forEach((el, it) => surgery[it] = el);
+
+
+        // Get the address of the counter
+        surgery.forEach(key => {
+            if(key[0] == "ADCO") electron.obj.fundamental.counterid = key[1];
+        });
+
+        electron.obj.fundamental.type = "Electronique"; // The detection are available on next milestones
+
 
         // Check TIC Mode
         var ticMode = detectTICMode(surgery);
 
-        if(ticMode == "standard") {
-            return cb("Standard mode are not available. This telemetry can't be used.", null);
-        } else if(ticMode == "historical") {
-
-        } else cb("TIC mode not recognized. Please check if your counter is OK or call your energy provider for testing/replacing your counter.", null);
+        if(ticMode == "standard") return cb("Standard mode are not available. This telemetry can't be used.", null);
+        else if(ticMode == "historical") electron.obj.fundamental.TICMode = "historical";
+        else return cb("TIC mode not recognized. Please check if your counter is OK or call your energy provider for testing/replacing your counter.", null);
 
 
-        console.log(surgery)
+        // Detect contract type
+        var contractType = detectContractType(surgery);
+
+        if(contractType != null) electron.obj.fundamental.contract = contractType;
+
+
+        // Get contract power
+        surgery.forEach(key => {
+            if(key[0] == "ISOUSC") electron.obj.fundamental.contractPower = key[1];
+        });
+
+
+        // Check if the install is in Threephases or in monophases
+        var threephase = isThreePhases(surgery);
+        if(threephase == true) electron.obj.fundamental.threePhases = true;
+        else electron.obj.fundamental.threePhases = false;
+
+
+        // Get instant intensity
+        surgery.forEach(key => {
+            if(key[0] == /IINST(\d|)/) electron.obj.extras[key[0].toLowerCase()] = key[1];
+        });
+
+
+        // Get indexes
+        if(contractType == "base") {
+            surgery.forEach(key => {
+                if(key[0] == "BASE") electron.obj.extras.indexes.base = key[1];
+            });
+        } else if(contractType == "hchp") {
+            surgery.forEach(key => {
+                if(key[0] == "HCHC") electron.obj.extras.indexes.hchc = key[1];
+                else if(key[0] == "HCHP") electron.obj.extras.indexes.hchp = key[1];
+            });
+        } else if(contractType == "ejp") {
+            surgery.forEach(key => {
+                if(key[0] == "EJPHN") electron.obj.extras.indexes.ejphn = key[1];
+                else if(key[0] == "EJPPM") electron.obj.extras.indexes.ejppm = key[1];
+                else if(key[0] == "PEJP") electron.obj.extras.pejp = key[1];
+            });
+        } else if(contractType == "tempo") {
+            surgery.forEach(key => {
+                if(key[0] == "BBRHCJB") electron.obj.extras.indexes.bbrhcjb = key[1];
+                else if(key[0] == "BBRHPJB") electron.obj.extras.indexes.bbrhpjb = key[1];
+                else if(key[0] == "BBRHCJW") electron.obj.extras.indexes.bbrhcjw = key[1];
+                else if(key[0] == "BBRHPJW") electron.obj.extras.indexes.bbrhpjw = key[1];
+                else if(key[0] == "BBRHCJR") electron.obj.extras.indexes.bbrhcjr = key[1];
+                else if(key[0] == "BBRHCJR") electron.obj.extras.indexes.bbrhpjr = key[1];
+                else if(key[0] == "DEMAIN") electron.obj.extras.demain = key[1];
+            });
+        }
+
+
+        // Get apparent power
+        surgery.forEach(key => {
+            if(key[0] == "PAPP") electron.obj.extras.apparentPower = key[1];
+        });
+
+
+        // Get ADPS
+        surgery.forEach(key => {
+            if(key[0] == "ADPS") electron.obj.extras.adps = key[1];
+        });
+        
+
+        // Get actual billing mode
+        surgery.forEach(key => {
+            if(key[0] == "PTEC") electron.obj.extras.ptec = key[1];
+        });
+
+
+        return cb(null, electron.obj);
     } else if(typeof str === "object") {
-        console.log(Object.keys);
+        /**
+         * This feature are planned for the 0.2.0
+         */
+        return cb(Error("JSON file is not supported for the moment."), null);
     }
 }
 
@@ -131,6 +217,48 @@ function detectTICMode(metric) {
 
 
 /**
+ * Detect the contract type
+ * @param {Object} metric LPL metric or JSON provided by the probe 
+ * @returns {String} can return "base", "hchp", "ejp" or "tempo"
+ */
+function detectContractType(metric) {
+    var finded =  false;
+    var result;
+
+    // Internal functions for testing if the key is matching with some tags
+    var detectContract = (key) => {
+        switch(key) {
+            case "BASE": return "base";
+            case String(key.match(/HC\S{2}/)): return "hchp";
+            case String(key.match(/EJP\S{2,3}/)): return "ejp";
+            case String(key.match(/BBR\S{4}/)): return "tempo";
+            
+            default: return "unknown";
+        }
+    }
+    
+    
+    // Check if the key numerical or if is a tag
+    if(!isNaN(parseInt(Object.keys(metric)[0]))) {
+        Object.keys(metric).forEach((line) => {
+            result = detectContract(metric[line][0]);
+            if(result != "unknown" && finded != true) finded = true;
+        });
+
+        if(finded) return result;
+        else return "unknown";
+    } else {
+        Object.keys(metric).forEach((line) => {
+            result = detectContract(line);
+            if(result != "unknown" && finded != true) finded = true;
+        });
+
+        if(finded) return result;
+        else return "unknown";
+    }
+}
+
+/**
  * Detect if the installation is single-phase or three-phase
  * @param {Object} metric LPL metric or JSON provided by the probe  
  * @returns {Boolean} Return a boolean if the installation is in three-phase
@@ -178,6 +306,7 @@ module.exports = {
     createElectron,
     verifyChecksum,
     detectTICMode,
+    detectContractType,
     isThreePhases,
     contractChanged
 };
