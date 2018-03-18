@@ -23,7 +23,7 @@ describe("Test dataset methods", () => {
             fs.unlinkSync(path.resolve(__dirname + "/../datasets/unittest-dataset.json")); // Remove the temporary file
         });
 
-        it("should return instance of Dataset class after creating new dataset (createDataset function)", () => {
+        it("should return 'true' if the dataset is created (createDataset function)", () => {
             datasetToolkit.createDataset("unittest-generation", (err, dataset) => {
                 if(err != null) assert.fail();
                 else assert.ok(true);
@@ -56,6 +56,144 @@ describe("Test dataset methods", () => {
 
     
     describe("Class methods", () => {
+        it("should return the entry added into the dataset (insert on Dataset class)", () => {
+            // Create temporary dataset
+            datasetToolkit.createDataset("datasetClass-insert", (err, status) => {
+                var ds = new datasetToolkit.Dataset("datasetClass-insert");
 
+                ds.insert({
+                    counter_id: "253269863251",
+                    type: "Linky",
+                    contract: "base",
+                    triphasee: false,
+                    created_date: Date.now()
+                }, (errInsert, data) => {
+                    if(errInsert != null) assert.fail();
+                    else assert.ok(true); 
+
+                    datasetToolkit.detroyDataset("datasetClass-insert", () => { });
+                });
+            });
+        });
+
+        it("should return the the complete dataset (getAllDataset on Dataset class)", () => {
+            // Create temporary dataset
+            datasetToolkit.createDataset("datasetClass-all", (err, status) => {
+                var ds = new datasetToolkit.Dataset("datasetClass-all");
+                var data = [
+                    {
+                        counter_id: "698321458524",
+                        type: "Linky",
+                        contract: "base",
+                        triphasee: false,
+                        created_date: Date.now()
+                    },
+                    {
+                        counter_id: "698321458526",
+                        type: "Electronique",
+                        contract: "hchp",
+                        triphasee: true,
+                        created_date: Date.now()
+                    },
+                    {
+                        counter_id: "698321458586",
+                        type: "Electronique",
+                        contract: "hchp",
+                        triphasee: true,
+                        created_date: Date.now()
+                    }
+                ];
+
+                ds.insert(data, (errInsert, data) => {
+                    if(errInsert != null) assert.fail();
+                    else {
+                        ds.getAllDataset((errFind, result) => {
+                            if(errFind != null) assert.fail();
+                            else assert.ok(true);
+                        });
+
+                        datasetToolkit.detroyDataset("datasetClass-all", () => { });
+                    }
+                });
+            });
+        });
+
+        it("should return the entry finded into the dataset (find on Dataset class)", () => {
+            // Create temporary dataset
+            datasetToolkit.createDataset("datasetClass-find", (err, status) => {
+                var ds = new datasetToolkit.Dataset("datasetClass-find");
+                var data = [
+                    {
+                        counter_id: "698321458524",
+                        type: "Linky",
+                        contract: "base",
+                        triphasee: false,
+                        created_date: Date.now()
+                    },
+                    {
+                        counter_id: "698321458524",
+                        type: "Electronique",
+                        contract: "hchp",
+                        triphasee: true,
+                        created_date: Date.now()
+                    }
+                ];
+
+                ds.insert(data, (errInsert, data) => {
+                    if(errInsert != null) assert.fail();
+                    else {
+                        ds.find("counter_id", "698321458524", (errFind, result) => {
+                            if(errFind != null) assert.fail();
+                            else assert.ok(true);
+                        });
+
+                        datasetToolkit.detroyDataset("datasetClass-find", () => { });
+                    }
+                });
+            });
+        });
+
+        it("should return all entries finded into the dataset (findAll on Dataset class)", () => {
+            // Create temporary dataset
+            datasetToolkit.createDataset("datasetClass-findAll", (err, status) => {
+                var ds = new datasetToolkit.Dataset("datasetClass-findAll");
+                var data = [
+                    {
+                        counter_id: "698321458524",
+                        type: "Linky",
+                        contract: "base",
+                        triphasee: false,
+                        created_date: Date.now()
+                    },
+                    {
+                        counter_id: "698321458526",
+                        type: "Electronique",
+                        contract: "hchp",
+                        triphasee: true,
+                        created_date: Date.now()
+                    },
+                    {
+                        counter_id: "698321458524",
+                        type: "Electronique",
+                        contract: "hchp",
+                        triphasee: true,
+                        created_date: Date.now()
+                    }
+                ];
+
+                ds.insert(data, (errInsert, data) => {
+                    if(errInsert != null) assert.fail();
+                    else {
+                        ds.findAll("counter_id", "698321458524", (errFind, results) => {
+                            console.log(results)
+                            if(errFind != null) assert.fail();
+                            else assert.ok(true);
+                        });
+
+                        datasetToolkit.detroyDataset("datasetClass-findAll", () => { });
+                    }
+                });
+            });
+        });
     });
 })

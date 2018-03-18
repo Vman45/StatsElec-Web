@@ -46,13 +46,13 @@ function createDataset(name, cb) {
                         _version: 1,
                         _name: name
                     },
-                    data: {}
+                    data: []
                 }, null, 4);
 
                 // Create the manifest
                 fs.writeFile(__dirname + `/../datasets/${name}.json`, datasetArchitecture, (err) => {
-                    if(err) cb(err, null);
-                    else cb(null, new Dataset(name));
+                    if(err) cb(err, false);
+                    else cb(null, true);
                 });
             }
         }
@@ -77,22 +77,110 @@ function detroyDataset(name, cb) {
 
 class Dataset {
     /**
-     * 
-     * @param {*} name 
+     * Instantiate a dataset for manipuling easily.
+     * @param {String} name 
      */
     constructor(name) {
         this.datasetName = name;
 
+        // Check if the dataset exists
+        if(datasetExists(this.datasetName)) {
+            // Check if the dataset is OK
+            var dataset = JSON.parse(fs.readFileSync(__dirname + `/../datasets/${this.datasetName}.json`));
+
+            if(dataset.manifest._version <= 0 && dataset.manifest._version > 1) return Error("The version of the specified dataset is uncompatible with this version of StatsElec. Please check the documentation for migrating your dataset to a compatible version.");
+            else if(dataset.manifest._name != name) return Error("The name of the dataset is different of the filename.");
+        } else return Error("The specified dataset not exists. Please create it before.");
     }
 
 
-    insert(entry, cb) { }
+    /**
+     * 
+     * @param {*} cb 
+     */
+    getAllDataset(cb) {
+        try {
+            var dataset = JSON.parse(fs.readFileSync(__dirname + `/../datasets/${this.datasetName}.json`));
 
-    find(entry, cb) { }
+            cb(null, dataset.data);
+        } catch(err) { cb(err, null); }
+    }
 
-    findAll(cb) { }
+    /**
+     * 
+     * @param {*} entry 
+     * @param {*} cb 
+     */
+    insert(entry, cb) {
+        var dataset = JSON.parse(fs.readFileSync(__dirname + `/../datasets/${this.datasetName}.json`));
+        
+
+        // Insert entry/entries into the memory dataset
+        if(entry.length === undefined) dataset.data.push(entry);
+        else {
+            for(var i = 0; i < entry.length; i++) dataset.data.push(entry[i])
+        }
+
+
+        // Insert the new dataset into the file
+        fs.writeFile(__dirname + `/../datasets/${this.datasetName}.json`, JSON.stringify(dataset, null, 4), (err) => {
+            if(err != null) cb(err, null);
+            else cb(null, entry);
+        });
+    }
+
+
+    /**
+     * 
+     * @param {*} key 
+     * @param {*} value 
+     * @param {*} cb 
+     */
+    find(key, value, cb) {
+        var dataset = JSON.parse(fs.readFileSync(__dirname + `/../datasets/${this.datasetName}.json`));
+        var finded = false;
+
+        for(var i = 0; finded != true && i < dataset.data.length; i++) {
+            Object.keys(dataset.data[i]).forEach((objKey) => {
+                if(objKey == key) {
+                    if(dataset.data[i][key] == value) {
+                        finded = true;
+                        cb(null, dataset.data[i]);
+                    }
+                }
+            });
+        }
+    }
+
+
+    /**
+     * 
+     * @param {*} key 
+     * @param {*} value 
+     * @param {*} cb 
+     */
+    findAll(key, value, cb) {
+        var dataset = JSON.parse(fs.readFileSync(__dirname + `/../datasets/${this.datasetName}.json`));
+        var findedResults = [];
+
+        for(var i = 0; i < dataset.data.length; i++) {
+            Object.keys(dataset.data[i]).forEach((objKey) => {
+                if(objKey == key) {
+                    if(dataset.data[i][key] == value) {
+                        findedResults.push(dataset.data[i]);
+                    }
+                }
+            });
+        }
+
+        cb(null, findedResults);
+    }
+
+
 
     findAndUpdate(entry, data, cb) { }
+
+
 
     findAndRemove(entry, cb) { }
 }
@@ -105,3 +193,5 @@ module.exports = {
     detroyDataset,
     Dataset
 }
+
+module.exports.Dataset = Dataset;
