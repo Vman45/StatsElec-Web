@@ -5,6 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
+    "start": "node index.js",
     "test": "node_modules/.bin/mocha",
     "build": "node_modules/.bin/webpack --mode production",
     "watch": "node_modules/.bin/webpack --mode development --watch"
