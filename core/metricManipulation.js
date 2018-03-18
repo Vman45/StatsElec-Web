@@ -46,11 +46,19 @@ function createElectron(str, cb) {
 
 
 /**
- * 
- * @param {*} str 
+ * Check the checksum of the tag. THIS FUNCTION RETURN TRUE BECAUSE IS NOT ALREADY CODED! WILL BE AVAILABLE FOR NEXT VERSION!
+ * @param {Object} metric LPL metric with the checksum
+ * @returns {Boolean} Return true if the checksum correspond with the metric
  */
-function verifyChecksum(str) {
+function verifyChecksum(metric) {
+    /*
+        Because I have some difficulties with the checksum calculation, this function is already created but return true.
+        This choice is for making the complete mechanical of createElectron function.
 
+        This function will be available for the next release or in this milestone (0.1.0)
+    */
+
+    return true;
 }
 
 
@@ -128,6 +136,9 @@ function detectTICMode(metric) {
  * @returns {Boolean} Return a boolean if the installation is in three-phase
  */
 function isThreePhases(metric) {
+    var threePhased = false;
+
+    // Internal function for testing if the key is matching with some tags
     var isThreePhase = (key) => {
         switch(key) {
             case String(key.match(/IINST\d/)):
@@ -140,10 +151,17 @@ function isThreePhases(metric) {
 
     // Check if the key numerical or if is a tag
     if(!isNaN(parseInt(Object.keys(metric)[0]))) {
-
+        Object.keys(metric).forEach((line) => {
+            if(isThreePhase(metric[line][0]) == true) threePhased = true;
+        });
     } else {
-    
+        Object.keys(metric).forEach((line) => {
+            if(isThreePhase(line) == true) threePhased = true;
+        });
     }
+
+    if(threePhased == true) return true;
+    else return false;
 }
 
 /**
@@ -160,5 +178,6 @@ module.exports = {
     createElectron,
     verifyChecksum,
     detectTICMode,
+    isThreePhases,
     contractChanged
 };

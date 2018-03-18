@@ -39,7 +39,7 @@ describe("Test metric manipulation functions", () => {
             assert.equal(metricManipulation.detectTICMode(tempData), "historical");
         });
 
-        it("should return 'unknown' (lpl mode - EJPHPM tag)", () => {
+        it("should return 'unknown' (lpl mode - no specific tag)", () => {
             var tempData = [
                 [ "ADCO", "256347852365", "<" ],
                 [ "NOTEXIT", "02", "M" ]
@@ -47,5 +47,43 @@ describe("Test metric manipulation functions", () => {
 
             assert.equal(metricManipulation.detectTICMode(tempData), "unknown");
         });
-    })
+    });
+
+    describe("#isThreePhases", () => {
+        it("should return 'false' (lpl mode - no specific tag)", () => {
+            var tempData = [
+                [ "ADCO", "256347852365", "<" ],
+                [ "NOTEXIT", "02", "M" ]
+            ]
+
+            assert.equal(metricManipulation.isThreePhases(tempData), false);
+        });
+
+        it("should return 'false' (organized mode - no specific tag)", () => {
+            var tempData = {
+                ADCO: "256347852365",
+                BASE: "000006325"
+            }
+
+            assert.equal(metricManipulation.isThreePhases(tempData), false);
+        });
+
+        it("should return 'true' (lpl mode - IINST2 tag)", () => {
+            var tempData = [
+                [ "ADCO", "256347852365", "<" ],
+                [ "IINST2", "12", "M" ]
+            ]
+
+            assert.equal(metricManipulation.isThreePhases(tempData), true);
+        });
+
+        it("should return 'true' (organized mode - IMAX1 tag)", () => {
+            var tempData = {
+                ADCO: "256347852365",
+                IMAX1: "12"
+            }
+
+            assert.equal(metricManipulation.isThreePhases(tempData), true);
+        });
+    });
 });
