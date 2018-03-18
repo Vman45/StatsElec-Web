@@ -27,6 +27,9 @@ app.set("view engine", "pug");
 app.use("/assets", express.static(__dirname + "/dist"));
 
 
+// Initialize Influx connection and initialize the retention rule
+var influx = require(__dirname + "/core/influxInitialization")(config, true);
+
 // Initialize MQTT connection and listening for new messages
 require(__dirname + "/core/brokerListener")(config);
 require(__dirname + "/core")(app);
