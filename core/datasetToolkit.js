@@ -28,17 +28,51 @@ function datasetExists(name) {
 }
 
 
-function CreateDataset(name) {
-    try {
-        createDatasetFolder(); // Create the folder if not exists
+/**
+ * Create the dataset if exists and return an instance of Dataset class
+ * @param {String} name The name of the dataset
+ * @param {Function} cb Return an error message or an instanced Dataset class
+ */
+function createDataset(name, cb) {
+    // Create the folder if not exists
+    createDatasetFolder((err, result) => {
+        if(err) cb(err, null);
+        else {
+            if(datasetExists(name) == true) cb(Error("The dataset already exists."), null);
+            else {
+                // Create the architecture of the file
+                var datasetArchitecture = JSON.stringify({
+                    manifest: {
+                        _version: 1,
+                        _name: name
+                    },
+                    data: {}
+                }, null, 4);
 
-        
-
-    } catch(e) {
-        return Error()
-    }
+                // Create the manifest
+                fs.writeFile(__dirname + `/../datasets/${name}.json`, datasetArchitecture, (err) => {
+                    if(err) cb(err, null);
+                    else cb(null, new Dataset(name));
+                });
+            }
+        }
+    }); 
 }
 
+
+/**
+ * Delete the dataset if exists
+ * @param {String} name The name of the dataset
+ * @param {Function} cb Return an error message or a boolean
+ */
+function detroyDataset(name, cb) {
+    if(datasetExists(name)) {
+        fs.unlink(__dirname + `/../datasets/${name}.json`, (err) => {
+            if(err) cb(err, false);
+            else cb(null, true);
+        });
+    } else cb(Error("The dataset not exists."), false);
+}
 
 
 class Dataset {
@@ -49,44 +83,25 @@ class Dataset {
     constructor(name) {
         this.datasetName = name;
 
-        fs.exists("../datasets", (exists) => {
-            if(exists == false) {
-                fs.mkdir("../datasets");
-            }
-        });
-
-        fs.exists(`../datasets/${name}.json`, (exists) => {
-            if(exists == false) {
-                
-            }
-        });
     }
 
 
+    insert(entry, cb) { }
 
+    find(entry, cb) { }
 
-    /**
-     * 
-     * @param {*} entry 
-     */
-    find(entry, cb) {
-        fs.readFile("../")
-    }
+    findAll(cb) { }
 
+    findAndUpdate(entry, data, cb) { }
 
-    findAll(cb) {
-
-    }
+    findAndRemove(entry, cb) { }
 }
+
 
 module.exports = {
-    CreateDataset,
-    Dataset
-}
-
-
-module.exports.tests = {
     createDatasetFolder,
     datasetExists,
-    CreateDataset
+    createDataset,
+    detroyDataset,
+    Dataset
 }
