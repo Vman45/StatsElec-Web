@@ -47,15 +47,73 @@ module.exports = (config, influx) => {
 
                     if(dataset != Error) {
                         dataset.find("counterid", electron.fundamental.counterid, (err, result) => {
+                            console.log(electron);
                             if(result == null) {
                                 dataset.insert(electron.fundamental, (err, entry) => {
                                     if(err != null) console.warn(colors.yellow("Unable to create this new counter. Trace:", err));
                                     else {
-                                        // TODO: loop for adding extras tags from electron to Influx
+                                        Object.keys(electron.extras).forEach(key => {
+                                            if(key == "indexes") {
+                                                Object.keys(electron.extras.indexes).forEach(index => {
+                                                    influx.writePoints([
+                                                        {
+                                                            measurement: "metrics",
+                                                            tags: { },
+                                                            fields: {
+                                                                tag: index,
+                                                                value: electron.extras.indexes[index],
+                                                                counterid: electron.fundamental.counterid
+                                                            }
+                                                        }
+                                                    ]);
+                                                });
+                                            } else {
+                                                influx.writePoints([
+                                                    {
+                                                        measurement: "metrics",
+                                                        tags: { },
+                                                        fields: {
+                                                            tag: key,
+                                                            value: electron.extras[key],
+                                                            counterid: electron.fundamental.counterid
+                                                        }
+                                                    }
+                                                ]);
+                                            }
+                                        });
                                     }
                                 });
                             } else {
-                                // TODO: loop for adding extras tags from electron to Influx
+                                Object.keys(electron.extras).forEach(key => {
+                                    if(key == "indexes") {
+                                        Object.keys(electron.extras.indexes).forEach(index => {
+                                            console.log(index, electron.extras.indexes[index])
+                                            influx.writePoints([
+                                                {
+                                                    measurement: "metrics",
+                                                    tags: { },
+                                                    fields: {
+                                                        tag: index,
+                                                        value: electron.extras.indexes[index],
+                                                        counterid: electron.fundamental.counterid
+                                                    }
+                                                }
+                                            ]);
+                                        });
+                                    } else {
+                                        influx.writePoints([
+                                            {
+                                                measurement: "metrics",
+                                                tags: { },
+                                                fields: {
+                                                    tag: key,
+                                                    value: electron.extras[key],
+                                                    counterid: electron.fundamental.counterid
+                                                }
+                                            }
+                                        ]);
+                                    }
+                                });
                             }
                         });
                     }

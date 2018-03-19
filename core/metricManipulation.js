@@ -75,6 +75,8 @@ function createElectron(str, cb) {
 
 
         // Get indexes
+        electron.obj.extras.indexes = {};
+        
         if(contractType == "base") {
             surgery.forEach(key => {
                 if(key[0] == "BASE") electron.obj.extras.indexes.base = key[1];
@@ -229,9 +231,9 @@ function detectContractType(metric) {
     var detectContract = (key) => {
         switch(key) {
             case "BASE": return "base";
-            case String(key.match(/HC\S{2}/)): return "hchp";
-            case String(key.match(/EJP\S{2,3}/)): return "ejp";
-            case String(key.match(/BBR\S{4}/)): return "tempo";
+            case String(key.match(/HC\S+/)): return "hchp";
+            case String(key.match(/EJP\S+/)): return "ejp";
+            case String(key.match(/BBR\S+/)): return "tempo";
             
             default: return "unknown";
         }
@@ -241,16 +243,20 @@ function detectContractType(metric) {
     // Check if the key numerical or if is a tag
     if(!isNaN(parseInt(Object.keys(metric)[0]))) {
         Object.keys(metric).forEach((line) => {
-            result = detectContract(metric[line][0]);
-            if(result != "unknown" && finded != true) finded = true;
+            if(finded != true) {
+                result = detectContract(metric[line][0]);
+                if(result != "unknown" && finded != true) finded = true;
+            }
         });
 
         if(finded) return result;
         else return "unknown";
     } else {
         Object.keys(metric).forEach((line) => {
-            result = detectContract(line);
-            if(result != "unknown" && finded != true) finded = true;
+            if(finded != true) {
+                result = detectContract(line);
+                if(result != "unknown" && finded != true) finded = true;
+            }
         });
 
         if(finded) return result;

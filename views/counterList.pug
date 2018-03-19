@@ -1,0 +1,24 @@
+extends layout/main
+
+block append content
+    .container    
+        h2.margin-25-top Liste compteurs
+        table.table--zebra
+            thead
+                th Identifiant compteur
+                th Type de compteur
+                th Contrat
+                th Puissance souscrite
+                th(width="25%") 
+            tbody
+                each counter in data
+                    tr
+                        td= counter.counterid
+                        td= counter.type
+                        td 
+                            span.tag--primary= counter.contract
+                        td
+                            span.tag--primary= counter.contractPower
+                            
+                        td
+                            a(href="/counter/" + counter.counterid) Voir la page du compteur

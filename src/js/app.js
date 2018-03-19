@@ -1,4 +1,4 @@
 var chartjs = require("chartjs")
 import "../scss/app.scss";
 
-require("./components/counter")() 
+require("./components/counter")(chartjs) 

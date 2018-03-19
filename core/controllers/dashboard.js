@@ -10,29 +10,29 @@ route.get("/", (req, res) => {
     var data = {
         todayConsumption: 0,
         totalConsumption: 0,
-        nbCounters: 0
+        nbCounters: 0,
+        lastTelemetries: []
     }
 
     // Get numbers of counters
     if(dataset != null) {
         dataset.getAllDataset((err, results) => {
-            if(err != null) {
-                console.error(colors.red(err));
-                nbCounters = NaN;
-            } else nbCounters = results.length;
+            if(err != null) nbCounters = NaN;
+            else nbCounters = results.length;
         });
     }
 
-    // Retrieve informations from influx
-    influx.query("select SUM(DISTINCT(value)) FROM metrics WHERE ").then(results => {
-        console.log(results[0].count);
-    })
+    // Get latests telemetries
+    influx.query(`select counterid from metrics ORDER BY DESC LIMIT 15`).then(telemetries => {
+        telemetries.forEach(line => data.lastTelemetries.push({ counterid: line.counterid, timestamp: new Date(line.time.getNanoTime() / 1000000) }));
 
-    res.render("index", {
-        siteOptions: {
-            pageTitle: "Dashboard"
-        }, data: data
-    });
+        // Serve the file        
+        res.render("index", {
+            siteOptions: {
+                pageTitle: "Dashboard"
+            }, data: data
+        });
+    }).catch(() => res.status(500).send("Une erreur est survenue lors de la tentative de récupération des données."));
 });
 
 
@@ -43,12 +43,11 @@ route.get("/list", (req, res) => {
     if(dataset != null) {
         dataset.getAllDataset((err, results) => {
             if(err != null) {
-                console.error(colors.red(err));
                 res.status(500).send("Une erreur est survenue lors de la tentative de récupération de la liste des compteurs.");
             } else {
-                res.render("index", {
+                res.render("counterList", {
                     siteOptions: {
-                        pageTitle: "Dashboard"
+                        pageTitle: "Liste des compteurs"
                     }, data: results
                 });
             }

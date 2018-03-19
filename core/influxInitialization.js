@@ -21,6 +21,7 @@ module.exports = (initRetention) => {
         database: config.influx.database
     });
 
+
     // Check if the database exists and create it if isn't
     influx.getDatabaseNames().then((dbs) => {
         if(!dbs.includes(config.influx.database)) return influx.createDatabase(config.influx.database)

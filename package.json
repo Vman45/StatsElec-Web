@@ -21,7 +21,7 @@
     "pug": "^2.0.0"
   },
   "devDependencies": {
-    "chartjs": "^0.3.24",
+    "chart.js": "^2.7.2",
     "css-loader": "^0.28.10",
     "extract-text-webpack-plugin": "next",
     "knacss": "^7.0.3",

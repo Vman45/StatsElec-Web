@@ -3,7 +3,7 @@ extends layout/main
 block append content
     a.open-info(href="") &raquo;
     .info-bar
-        h3 Informations sur le compteur
+        h3#counterPage Informations sur le compteur
 
         ul.list
             li Adresse du compteur : 
@@ -41,9 +41,15 @@ block append content
         h2 Compteur !{data.counterInfo.counterid}
 
         section.grid-2.has-gutter
-            div(style="width:100%; height: 400px; background: #ddd")
-            div(style="width:100%; height: 400px; background: #ddd")
-            div(style="width:100%; height: 400px; background: #ddd")
-            div(style="width:100%; height: 400px; background: #ddd")
+            each counter in Object.keys(data.metrics)
+                .col-half
+                    canvas(id="graph-" + counter width="100%" height="400" style="background: #fafafa")
+
+
+
+    
+block prepend javascript
+    script.
+        var data = !{JSON.stringify(data.metrics)}
 
             

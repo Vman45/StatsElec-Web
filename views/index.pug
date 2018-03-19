@@ -6,12 +6,12 @@ block append content
             .stat        
                 .body.blue
                     h2 Consommation du jour
-                    span.data 13 kWh
+                    span.data 0 kWh
 
             .stat
                 .body.orange
                     h2 Consommation totale
-                    span.data 4K kWh
+                    span.data 0 kWh
 
             .stat
                 .body.purple
@@ -19,16 +19,17 @@ block append content
                     span.data= data.nbCounters
 
     
-        h2.margin-25-top Liste des dernières receptions
+        h2.margin-25-top Liste des dernières 15 receptions
         table.table--zebra
             thead
                 th Identifiant compteur
                 th Dernière métrique reçue
                 th(width="25%") 
             tbody
-                tr
-                    td 0123301203921
-                    td 
-                        span.tag--primary 09/03/2018 00:00:00
-                    td
-                        a(href="/counter/0") Voir la page du compteur
+                each telemetry in data.lastTelemetries
+                    tr
+                        td= telemetry.counterid
+                        td 
+                            span.tag--primary= telemetry.timestamp.toLocaleString()
+                        td
+                            a(href="/counter/" + telemetry.counterid) Voir la page du compteur
