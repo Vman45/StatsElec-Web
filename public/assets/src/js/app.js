@@ -1,3 +1,3 @@
 import "../scss/app.scss";
 
-require("./components/counter");
+require("./components/counter")();

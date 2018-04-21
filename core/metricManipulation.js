@@ -78,7 +78,6 @@ function createElectron(str, cb) {
 
 
         // Get indexes
-        console.log(contractType)    
         if(contractType == "base") {
             surgery.forEach(key => {
                 if(key[0] == "BASE") electron.obj.data.index1 = key[1];

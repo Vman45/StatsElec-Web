@@ -1,23 +1,16 @@
-var Chart = require("chart.js");
+var Chart      = require("chart.js"),
+    moment     = require("moment"),
+    beautifier = require("../../../../../core/dataBeautifier");
+
 
 module.exports = () => {
-    // Assign trigger to all open-info buttons
-    document.querySelectorAll("a.open-info").forEach((btn) => {
-        btn.addEventListener("click", (el) => {
-            el.preventDefault();
-
-            btn.classList.toggle("clicked");
-            document.querySelector(".info-bar").classList.toggle("opened");
-        });
-    });
-
-
     if(document.querySelector("#counterPage") != null) {
-        Object.keys(data).forEach(chartKey => {
+        infos.charts.forEach(chartKey => {
+            console.log(chartKey)
             var chartData = {
                 labels: [ ],
                 datasets: [{
-                    label: chartKey,
+                    label: chartKey.name,
 					backgroundColor: "#5aa3e777",
 					borderColor: "#5aa3e7",
 					data: [ ],
@@ -29,20 +22,21 @@ module.exports = () => {
             var chartInfo = chartData.datasets[0].data;
             var labels    = chartData.labels;
 
-            for(var i = 0; i < data[chartKey].length; i++) {
-                labels.push(data[chartKey][i].timestamp);
-                chartInfo.push(data[chartKey][i].value);
+            for(var i = 0; i < metrics.length; i++) {
+                console.log(metrics[i], metrics[i][chartKey.raw])
+                labels.push(moment(metrics[i].received_at).format("DD/MM/YYYY HH:mm:ss"));
+                chartInfo.push(metrics[i][chartKey.raw]);
             }
 
+
             // Generate the chart
-            
             var chart = new Chart(document.getElementById("graph-" + chartKey).getContext("2d"), {
                 type: "line",
                 data: chartData,
                 options: {
                     title: {
                         display: true,
-                        text: "Etiquette " + chartKey
+                        text: chartKey.name
                     },
                     responsive: true,
                     maintainAspectRatio: false
