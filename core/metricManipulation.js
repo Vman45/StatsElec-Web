@@ -99,7 +99,7 @@ function createElectron(str, cb) {
                 else if(key[0] == "BBRHCJW") electron.obj.extras.indexes.bbrhcjw = key[1];
                 else if(key[0] == "BBRHPJW") electron.obj.extras.indexes.bbrhpjw = key[1];
                 else if(key[0] == "BBRHCJR") electron.obj.extras.indexes.bbrhcjr = key[1];
-                else if(key[0] == "BBRHCJR") electron.obj.extras.indexes.bbrhpjr = key[1];
+                else if(key[0] == "BBRHPJR") electron.obj.extras.indexes.bbrhpjr = key[1];
                 else if(key[0] == "DEMAIN") electron.obj.extras.demain = key[1];
             });
         }

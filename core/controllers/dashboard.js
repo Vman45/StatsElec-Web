@@ -17,8 +17,8 @@ route.get("/", (req, res) => {
     // Get numbers of counters
     if(dataset != null) {
         dataset.getAllDataset((err, results) => {
-            if(err != null) nbCounters = NaN;
-            else nbCounters = results.length;
+            if(err != null) data.nbCounters = NaN;
+            else data.nbCounters = results.length;
         });
     }
 
