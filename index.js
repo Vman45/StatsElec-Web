@@ -1,9 +1,7 @@
 var express    = require("express"),
     bodyParser = require("body-parser"),
     pug        = require("pug"),
-    influx     = require("influx"),
     colors     = require("colors"),
-    datasets   = require("./core/datasetToolkit"),
     app        = express(),
 
     config;
@@ -25,27 +23,12 @@ const HTTP_PORT = process.env.PORT || config.general.port || 8055;
 // Configure express
 app.disable("x-powered-by")
 app.set("view engine", "pug");
-app.use("/assets", express.static(__dirname + "/dist"));
-
-
-// Initialize Influx connection and initialize the retention rule
-var influx = require(__dirname + "/core/influxInitialization")(true);
-
-
-// Check and initialize counters dataset if not exists
-if(!datasets.datasetExists("counters")) {
-    console.info(colors.cyan("Creating 'counters' dataset"));
-    datasets.createDataset("counters", err => {
-        if(err != null) {
-            console.error(colors.red(err));
-            process.exit(1);
-        } else console.info(colors.cyan("'Counters' dataset is created!"));
-    });
-}
+app.set("views", __dirname + "/public/views");
+app.use("/assets", express.static(__dirname + "/public/assets"));
 
 
 // Initialize MQTT connection and listening for new messages
-require(__dirname + "/core/brokerListener")(config, influx);
+require(__dirname + "/core/brokerListener")(config);
 require(__dirname + "/core")(app);
 
 

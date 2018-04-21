@@ -1,10 +1,11 @@
-var metrics = require("./metricManipulation"),
-    Dataset = require("./datasetToolkit").Dataset,
-    mqtt    = require("mqtt"),
-    colors  = require("colors");
+var metrics        = require("./metricManipulation"),
+    Counter        = require("./models/counters").Model,
+    HistoTelemetry = require("./models/histoTelemetry").Model,
+    mqtt           = require("mqtt"),
+    colors         = require("colors");
 
 
-module.exports = (config, influx) => {
+module.exports = (config) => {
     console.log(colors.yellow("Trying to connect to MQTT Broker..."));
 
 
@@ -43,82 +44,42 @@ module.exports = (config, influx) => {
             metrics.createElectron(message.toString(), (err, electron) => {
                 if(err != null) console.warn(colors.yellow("This metric is not arrived in conformity. Trace:", err));
                 else {
-                    var dataset = new Dataset("counters");
+                    // Check if the counter already exists
+                    new Counter().where({ id: electron.info.id }).fetch().then(r => {
+                        if(r == null) {
+                            console.info(colors.cyan("New counter detected! Attempt to add the counter into the database."));
 
-                    if(dataset != Error) {
-                        dataset.find("counterid", electron.fundamental.counterid, (err, result) => {
-                            console.log(electron);
-                            if(result == null) {
-                                dataset.insert(electron.fundamental, (err, entry) => {
-                                    if(err != null) console.warn(colors.yellow("Unable to create this new counter. Trace:", err));
-                                    else {
-                                        Object.keys(electron.extras).forEach(key => {
-                                            if(key == "indexes") {
-                                                Object.keys(electron.extras.indexes).forEach(index => {
-                                                    influx.writePoints([
-                                                        {
-                                                            measurement: "metrics",
-                                                            tags: { },
-                                                            fields: {
-                                                                tag: index,
-                                                                value: electron.extras.indexes[index],
-                                                                counterid: electron.fundamental.counterid
-                                                            }
-                                                        }
-                                                    ]);
-                                                });
-                                            } else {
-                                                influx.writePoints([
-                                                    {
-                                                        measurement: "metrics",
-                                                        tags: { },
-                                                        fields: {
-                                                            tag: key,
-                                                            value: electron.extras[key],
-                                                            counterid: electron.fundamental.counterid
-                                                        }
-                                                    }
-                                                ]);
-                                            }
-                                        });
-                                    }
-                                });
-                            } else {
-                                Object.keys(electron.extras).forEach(key => {
-                                    if(key == "indexes") {
-                                        Object.keys(electron.extras.indexes).forEach(index => {
-                                            console.log(index, electron.extras.indexes[index])
-                                            influx.writePoints([
-                                                {
-                                                    measurement: "metrics",
-                                                    tags: { },
-                                                    fields: {
-                                                        tag: index,
-                                                        value: electron.extras.indexes[index],
-                                                        counterid: electron.fundamental.counterid
-                                                    }
-                                                }
-                                            ]);
-                                        });
-                                    } else {
-                                        influx.writePoints([
-                                            {
-                                                measurement: "metrics",
-                                                tags: { },
-                                                fields: {
-                                                    tag: key,
-                                                    value: electron.extras[key],
-                                                    counterid: electron.fundamental.counterid
-                                                }
-                                            }
-                                        ]);
-                                    }
-                                });
-                            }
-                        });
-                    }
+                            // Create new Counter
+                            Counter.forge(electron.info).save(null, { method: "insert" }).then(() => {
+                                console.info(colors.green(`The new counter ${electron.info.id} has been added! Insering the telemetry.`));
+                                
+                                insertTelemetry(electron); // Insert telemetry
+                            }).catch(errAdd => console.error("An error is occured when we tried to add new counter. Trace:", errAdd));
+                        } else {
+                            var cinfo = r.toJSON();
+
+                            // Insert telemetry
+                            insertTelemetry(electron);
+                        }
+                    });
                 }
             });
         }
     });
+}
+
+
+// Function for inserting telemtry into the good table
+function insertTelemetry(electron) {
+    // Check the TIC Mode
+    var telemetry; 
+
+    // if(electron.info.tic_mode == 0) telemetry = HistoTelemetry.forge({
+    //     counterId: electron.data.counterId,
+    //     index1: electron.data.index2
+    // });
+    // else var telemetry = null;
+
+    // Forge and save data into database
+    new HistoTelemetry(electron.data).save().then(() => console.info(colors.green(`New telemetry from ${electron.info.id} has been added.`))).catch(err => console.error(colors.red(`Unable to add the telemetry from ${electron.info.id}. Trace: `, err)));
 }

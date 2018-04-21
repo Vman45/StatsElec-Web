@@ -1,0 +1,12 @@
+@import "_variables";
+
+.counterInfos {
+    background: $light-gray;
+    padding: 15px;
+    border-radius: 5px;
+
+    ul.informations {
+        list-style: none;
+        padding-left: 1em;
+    }
+}

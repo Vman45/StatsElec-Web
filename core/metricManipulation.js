@@ -19,7 +19,7 @@ function createElectron(str, cb) {
          * Surgery variable is... for surgery purposes... She's dedicated to bloody actions so if you can stay away of this variable, is better for you!
         */
         var electron = {
-            obj: { fundamental: {}, extras: {} },
+            obj: { info: {}, data: {} },
             lpl: []
         };
         
@@ -36,91 +36,93 @@ function createElectron(str, cb) {
 
         // Get the address of the counter
         surgery.forEach(key => {
-            if(key[0] == "ADCO") electron.obj.fundamental.counterid = key[1];
+            if(key[0] == "ADCO") {
+                electron.obj.info.id = key[1];
+                electron.obj.data.counterId = key[1];
+            }
         });
 
-        electron.obj.fundamental.type = "Electronique"; // The detection are available on next milestones
+        electron.obj.info.type = 0; // The detection are available on next milestones
 
 
         // Check TIC Mode
         var ticMode = detectTICMode(surgery);
 
         if(ticMode == "standard") return cb("Standard mode are not available. This telemetry can't be used.", null);
-        else if(ticMode == "historical") electron.obj.fundamental.TICMode = "historical";
+        else if(ticMode == "historical") electron.obj.info.tic_mode = 0;
         else return cb("TIC mode not recognized. Please check if your counter is OK or call your energy provider for testing/replacing your counter.", null);
 
 
         // Detect contract type
         var contractType = detectContractType(surgery);
 
-        if(contractType != null) electron.obj.fundamental.contract = contractType;
+        if(contractType != null) electron.obj.info.contract = contractType;
 
 
         // Get contract power
         surgery.forEach(key => {
-            if(key[0] == "ISOUSC") electron.obj.fundamental.contractPower = key[1];
+            if(key[0] == "ISOUSC") electron.obj.info.sub_power = key[1];
         });
 
 
         // Check if the install is in Threephases or in monophases
         var threephase = isThreePhases(surgery);
-        if(threephase == true) electron.obj.fundamental.threePhases = true;
-        else electron.obj.fundamental.threePhases = false;
+        if(threephase == true) electron.obj.info.threephases = true;
+        else electron.obj.info.threephases = false;
 
 
         // Get instant intensity
-        surgery.forEach(key => {
-            if(key[0] == /IINST(\d|)/) electron.obj.extras[key[0].toLowerCase()] = key[1];
-        });
+        // surgery.forEach(key => {
+        //     if(key[0] == /IINST(\d|)/) electron.obj.data[key[0].toLowerCase()] = key[1];
+        // });
 
 
         // Get indexes
-        electron.obj.extras.indexes = {};
-        
+        console.log(contractType)    
         if(contractType == "base") {
             surgery.forEach(key => {
-                if(key[0] == "BASE") electron.obj.extras.indexes.base = key[1];
+                if(key[0] == "BASE") electron.obj.data.index1 = key[1];
             });
         } else if(contractType == "hchp") {
             surgery.forEach(key => {
-                if(key[0] == "HCHC") electron.obj.extras.indexes.hchc = key[1];
-                else if(key[0] == "HCHP") electron.obj.extras.indexes.hchp = key[1];
+                if(key[0] == "HCHC") electron.obj.data.index1 = key[1];
+                else if(key[0] == "HCHP") electron.obj.data.index2 = key[1];
             });
         } else if(contractType == "ejp") {
             surgery.forEach(key => {
-                if(key[0] == "EJPHN") electron.obj.extras.indexes.ejphn = key[1];
-                else if(key[0] == "EJPPM") electron.obj.extras.indexes.ejppm = key[1];
-                else if(key[0] == "PEJP") electron.obj.extras.pejp = key[1];
+                if(key[0] == "EJPHN") electron.obj.data.index1 = key[1];
+                else if(key[0] == "EJPPM") electron.obj.data.index2 = key[1];
+                else if(key[0] == "PEJP") electron.obj.data.index3 = key[1];
             });
         } else if(contractType == "tempo") {
             surgery.forEach(key => {
-                if(key[0] == "BBRHCJB") electron.obj.extras.indexes.bbrhcjb = key[1];
-                else if(key[0] == "BBRHPJB") electron.obj.extras.indexes.bbrhpjb = key[1];
-                else if(key[0] == "BBRHCJW") electron.obj.extras.indexes.bbrhcjw = key[1];
-                else if(key[0] == "BBRHPJW") electron.obj.extras.indexes.bbrhpjw = key[1];
-                else if(key[0] == "BBRHCJR") electron.obj.extras.indexes.bbrhcjr = key[1];
-                else if(key[0] == "BBRHPJR") electron.obj.extras.indexes.bbrhpjr = key[1];
-                else if(key[0] == "DEMAIN") electron.obj.extras.demain = key[1];
+                if(key[0] == "BBRHCJB") electron.obj.data.index1 = key[1];
+                else if(key[0] == "BBRHPJB") electron.obj.data.index2 = key[1];
+                else if(key[0] == "BBRHCJW") electron.obj.data.index3 = key[1];
+                else if(key[0] == "BBRHPJW") electron.obj.data.index4 = key[1];
+                else if(key[0] == "BBRHCJR") electron.obj.data.index5 = key[1];
+                else if(key[0] == "BBRHPJR") electron.obj.data.index6 = key[1];
+                //else if(key[0] == "DEMAIN") electron.obj.data.demain = key[1];
             });
         }
 
 
         // Get apparent power
-        surgery.forEach(key => {
-            if(key[0] == "PAPP") electron.obj.extras.apparentPower = key[1];
-        });
+        // surgery.forEach(key => {
+        //     if(key[0] == "PAPP") electron.obj.data.apparentPower = key[1];
+        // });
 
 
-        // Get ADPS
-        surgery.forEach(key => {
-            if(key[0] == "ADPS") electron.obj.extras.adps = key[1];
-        });
+        // // Get ADPS
+        // surgery.forEach(key => {
+        //     if(key[0] == "ADPS") electron.obj.data.adps = key[1];
+        // });
         
 
-        // Get actual billing mode
-        surgery.forEach(key => {
-            if(key[0] == "PTEC") electron.obj.extras.ptec = key[1];
-        });
+        // // Get actual billing mode
+        // surgery.forEach(key => {
+        //     if(key[0] == "PTEC") electron.obj.data.ptec = key[1];
+        // });
 
 
         return cb(null, electron.obj);

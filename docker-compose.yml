@@ -18,15 +18,9 @@ services:
     environment:
       - POSTGRES_DB=statselec
     ports:
-      - 5432:5432
-    volumes:
-      - ./container_content/psql:/var/lib/postgresql/data
-
-  influx:
-    image: influxdb:alpine
-    #restart: always
-    volumes:
-      - ./container_content/influx:/var/lib/influxdb
+      - 127.0.0.1:5432:5432
+    #volumes:
+    #  - ./container_content/psql:/var/lib/postgresql/data
 
   broker:
     image: eclipse-mosquitto:latest

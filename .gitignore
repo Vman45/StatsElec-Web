@@ -1,5 +1,9 @@
+.vs/
+.vscode/
+.idea/
+
 node_modules/
-dist/
+public/assets/dist/
 datasets/
 container_content/
 **.log

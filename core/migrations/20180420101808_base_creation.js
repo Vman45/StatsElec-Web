@@ -6,15 +6,16 @@ exports.up = function(knex, Promise) {
     // Create counters table
     function createCountersTable() {
         return knex.schema.createTable("counters", t => {
-            t.integer("id").primary().unsigned().unique();
-            t.string("name", 15);
-            t.string("localisation", 25);
-            t.string("contract", 4);
-            t.integer("sub_power").unsigned();
-            t.boolean("threephases").defaultTo(false);
-            t.integer("tic_mode").unsigned();
-            t.timestamp("created_at").defaultTo(knex.fn.now());
-            t.timestamp("updated_at").defaultTo(knex.fn.now());
+            t.bigInteger("id").primary().unsigned().unique().notNullable();
+            t.string("name", 15).defaultTo("sans nom");
+            t.string("localisation", 25).defaultTo("inconnu");
+            t.integer("type").unsigned().notNullable();
+            t.string("contract", 8).notNullable();
+            t.integer("sub_power").unsigned().notNullable();
+            t.boolean("threephases").notNullable().defaultTo(false);
+            t.integer("tic_mode").unsigned().notNullable();
+            t.timestamp("created_at").notNullable().defaultTo(knex.fn.now());
+            t.timestamp("updated_at").notNullable().defaultTo(knex.fn.now());
         });
     }
         
@@ -22,8 +23,8 @@ exports.up = function(knex, Promise) {
     // Create historical telemetry table
     function createHistoricalTelemetryTable() {
         return knex.schema.createTable("histo_telemetry", t => {
-            t.bigIncrements("id");
-            t.integer("counterId").unsigned();
+            t.bigIncrements("id").notNullable();
+            t.bigInteger("counterId").unsigned().notNullable();
             t.integer("index1").unsigned();
             t.integer("index2").unsigned();
             t.integer("index3").unsigned();
@@ -36,7 +37,7 @@ exports.up = function(knex, Promise) {
             t.integer("imax1").unsigned();
             t.integer("imax2").unsigned();
             t.integer("imax3").unsigned();
-            t.timestamp("received_at").defaultTo(knex.fn.now());
+            t.timestamp("received_at").notNullable().defaultTo(knex.fn.now());
             t.foreign("counterId").references("counters.id");
         });
     }
@@ -44,8 +45,8 @@ exports.up = function(knex, Promise) {
 };
 
 exports.down = function(knex, Promise) {
-    return dropCountersTable()
-           .then(dropHistoricalTelemetryTable);
+    return dropHistoricalTelemetryTable()
+           .then(dropCountersTable);
 
 
     // Drop counters table

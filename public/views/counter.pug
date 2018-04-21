@@ -1,0 +1,43 @@
+extends layout/main
+
+block append content
+    .container.margin-25-top
+        section.counterInfos.grid-8.has-gutter
+            .col-7
+                h2 
+                    i Compteur !{data.counterInfo.name}
+                
+                ul.informations
+                    li Localisation : 
+                        i= data.counterInfo.localisation
+                    li Identifiant : 
+                        i= data.counterInfo.id
+                    li Type de compteur : 
+                        i !{data.counterInfo.type} !{data.counterInfo.threephases}
+                            
+                    li Contrat : 
+                        i Tarification de base
+                    li Puissance souscrite : 
+                        i 9kVA (45A)
+                    li Date d'ajout : 
+                        i= data.counterInfo.created_at
+                    li Dernière télémétrie reçue : 
+                        i il y a 12 secondes
+
+            .col-1
+                img(src="/assets/img/linky_counter.svg")
+
+
+        section.grid-2.has-gutter
+            //- each counter in Object.keys(data.metrics)
+            //-     .col-half
+            //-         canvas(id="graph-" + counter width="100%" height="400" style="background: #fafafa")
+
+
+
+    
+block prepend javascript
+    script.
+        //- var data = !{JSON.stringify(data.metrics)}
+
+            

@@ -1,8 +1,7 @@
 var bookshelf = require("../databaseConnector");
 
 var Model = bookshelf.Model.extend({
-    tableName: "counters",
-    hasTimestamps: ["created_at", "updated_at"]
+    tableName: "histo_telemetry"
 });
 
 var Collection = bookshelf.Collection.extend({

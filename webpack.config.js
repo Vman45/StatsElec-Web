@@ -2,10 +2,10 @@ var webpack = require("webpack");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
-    entry: __dirname + "/src/js/app.js",
+    entry: __dirname + "/public/assets/src/js/app.js",
     output: {
       filename: "app.js",
-      path: __dirname + "/dist"
+      path: __dirname + "/public/assets/dist"
     },
     module: {
         rules: [{
@@ -22,7 +22,7 @@ module.exports = {
                     {
                         loader: "sass-loader",
                         options: { 
-                            includePaths: [ __dirname + "/src/scss" ]
+                            includePaths: [ __dirname + "/public/assets/src/scss" ]
                         }
                     }
                 ]
