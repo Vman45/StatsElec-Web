@@ -26,7 +26,6 @@ route.get("/[0-9]{12}", (req, res) => {
             data.StrContract    = beautifier.contractToString(data.contract);
             data.StrCreated_at  = moment(data.created_at).format("DD/MM/YYYY HH:mm");
             data.StrUpdated_at  = moment(data.updated_at).locale("fr").fromNow();
-            data.charts         = beautifier.metricsTagsFromContract(data.StrType, data.threephases);
 
             res.render("counter", {
                 siteOptions: {
