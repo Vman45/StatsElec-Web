@@ -1,11 +1,16 @@
+# Specific to code editor 
 .vs/
 .vscode/
 .idea/
 
-node_modules/
 public/assets/dist/
 datasets/
 container_content/
 **.log
 config/config.js
 config/config.*.js
+
+# Specific to some tools (code coverage, documentation, dependencies)
+node_modules/
+.nyc_output/
+site/

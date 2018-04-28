@@ -1,0 +1,5 @@
+site_name: StatsElec
+theme: material
+pages:
+  - Accueil: index.md
+  - Test: test.md
