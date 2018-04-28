@@ -38,6 +38,51 @@ function contractToString(value) {
 }
 
 /**
+ * Give possible metrics tags and the link with the database column
+ * @param {String} contract 
+ * @param {Boolean} threephase 
+ */
+function contractMetricsTags(contract, threephase) {
+    switch(contract.toLowerCase()) {
+        case "base":
+            var tags = [{ tag: "base", db: "index1" }];
+            break;
+
+        case "hchp":
+            var tags = [
+                { tag: "hchc", db: "index1" },
+                { tag: "hchp", db: "index2" }
+            ];
+            break;
+
+        case "ejp": 
+            var tags = [
+                { tag: "ejphn",  db: "index1" },
+                { tag: "ejphpm", db: "index2" }
+            ];
+            break;
+
+        case "tempo":
+            var tags = [
+                { tag: "bbrhcjb", db: "index1" },
+                { tag: "bbrhpjb", db: "index2" },
+                { tag: "bbrhcjw", db: "index3" },
+                { tag: "bbrhpjw", db: "index4" },
+                { tag: "bbrhcjr", db: "index5" },
+                { tag: "bbrhpjr", db: "index6" }
+            ];
+            break;
+
+        default: return `contrat inconnu (${contract})`;
+
+        if(threephase == true) tags.push({ tag: "iinst1", db: "iinst1" }, { tag: "iinst2", db: "iinst2" }, { tag: "iinst3", db: "iinst3" });
+        else tags.push({ tag: "iinst", db: "iinst1" });
+
+        return tags;
+    }
+}
+
+/**
  * Return the real name of a tag
  * @param {String} tag 
  */
@@ -119,24 +164,4 @@ function tagUnit(tag) {
 }
 
 
-/**
- * Return the number of charts needed for the specified contract
- * @param {String} contract the contract tag
- * @param {Boolean} threephase 
- */
-function nbCharts(contract, threephase) {
-    var nbCharts = threephase == true ? 3 : 1;
-
-    switch(contract.toLowerCase()) {
-        case "base":  nbCharts += 1;
-        case "hchp":  nbChars += 2;
-        case "ejp":   nbCharts += 2;
-        case "tempo": nbCharts += 6;
-        default: nbCharts += 1;
-    }
-
-    return nbCharts;
-}
-
-
-module.exports = { threephasesToString, counterTypeToString, contractToString, tagName, tagUnit, nbCharts };
+module.exports = { threephasesToString, counterTypeToString, contractToString, contractMetricsTags, tagName, tagUnit };

@@ -73,8 +73,9 @@ route.get("/[0-9]{12}/:tag", (req, res) => {
                     if(t.toJSON().length == 0) res.status(404).json({ code: 404, message: "No telemetry found for this counter." });
                     else res.json({ code: 200, data: t.toJSON() });
                 }).catch(err => {
+                    if(err.routine == "errorMissingColumn") res.json({ code: 500, message: "err"});
                     console.log(err);
-                    res.json({ code: 500, message: "err"});
+                    
                 })
             } else res.status(501).json({ code: 501, message: "Telemetry from standard mode counters are not available for now." });
         }
