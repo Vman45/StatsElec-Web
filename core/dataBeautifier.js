@@ -1,3 +1,5 @@
+var _ = require("lodash");
+
 /**
  * Return a string if the installation is monophase or threephase
  * @param {String} value
@@ -74,12 +76,12 @@ function contractMetricsTags(contract, threephase) {
             break;
 
         default: return `contrat inconnu (${contract})`;
-
-        if(threephase == true) tags.push({ tag: "iinst1", db: "iinst1" }, { tag: "iinst2", db: "iinst2" }, { tag: "iinst3", db: "iinst3" });
-        else tags.push({ tag: "iinst", db: "iinst1" });
-
-        return tags;
     }
+
+    if(threephase == true) tags.push({ tag: "iinst1", db: "iinst1" }, { tag: "iinst2", db: "iinst2" }, { tag: "iinst3", db: "iinst3" });
+    else tags.push({ tag: "iinst", db: "iinst1" });
+
+    return tags;
 }
 
 /**
@@ -129,39 +131,116 @@ function tagName(tag) {
  */
 function tagUnit(tag) {
     switch(tag.toUpperCase()) {
-        case "ADCO": return null;
-        case "OPTARIF": return null;
-        case "ISOUSC": return "A";
-        case "BASE": return "Wh";
-        case "HCHC": return "Wh";
-        case "HCHP": return "Wh";
-        case "EJPHN": return "Wh";
-        case "EJPHPM": return "Wh";
-        case "BBRHCJB": return "Wh";
-        case "BBRHPJB": return "Wh";
-        case "BBRHCJW": return "Wh";
-        case "BBRHPJW": return "Wh";
-        case "BBRHCJR": return "Wh";
-        case "BBRHPJR": return "Wh";
+        case "BASE":
+        case "HCHC":
+        case "HCHP":
+        case "EJPHN":
+        case "EJPHPM":
+        case "BBRHCJB":
+        case "BBRHPJB":
+        case "BBRHCJW":
+        case "BBRHPJW":
+        case "BBRHCJR":
+        case "BBRHPJR":
+            return "Wh";
+        
+        case "ISOUSC":
+        case "IINST":
+        case "IINST1":
+        case "IINST2":
+        case "IINST3":
+        case "ADPS":
+        case "IMAX":
+        case "IMAX1":
+        case "IMAX2":
+        case "IMAX3":
+            return "A";
+            
         case "PEJP": return "min";
-        case "PTEC": return null;
-        case "DEMAIN": return null;
-        case "IINST": return "A";
-        case "IINST1": return "A";
-        case "IINST2": return "A";
-        case "IINST3": return "A";
-        case "ADPS": return "A";
         case "PMAX": return "W";
-        case "IMAX": return "A";
-        case "IMAX1": return "A";
-        case "IMAX2": return "A";
-        case "IMAX3": return "A";
         case "PAPP": return "VA";
-        case "HHPHC": return null;
-        case "PPOT": return null;
-        default: return null;
+        
+        case "ADCO":
+        case "OPTARIF":
+        case "PTEC":
+        case "DEMAIN":
+        case "HHPHC":
+        case "PPOT":
+        default:
+            return null;
     }
 }
 
 
-module.exports = { threephasesToString, counterTypeToString, contractToString, contractMetricsTags, tagName, tagUnit };
+/**
+ * Return clean metrics object without useless columns
+ * @param {Object} counterInfo 
+ * @param {Object} metrics 
+ */
+function removeUselessColumns(counterInfo, metrics) {
+    var omitTagsList = [];
+
+    try {
+            if(typeof counterInfo.tic_mode === "undefined") throw "No tic_mode information";
+            else if(counterInfo.tic_mode == 0) {
+                // Add useless phases tags into omitTagsList if the installation is in monophase
+                if(typeof counterInfo.threephases == "undefined") throw "Threephases information not available";
+                else if(counterInfo.threephases == false) omitTagsList.push("iinst2", "iinst3");
+        
+                // Add useless index columns into omitTagsList not in relation with the subscribed contract
+                if(typeof counterInfo.contract === "undefined") throw "No contract information";
+                else if(counterInfo.contract.toLowerCase() == "base") omitTagsList.push("index2", "index3", "index4", "index5", "index6");
+                else if(counterInfo.contract.toLowerCase() == "hchp" || counterInfo.contract.toLowerCase() == "ejp") omitTagsList.push("index3", "index4", "index5", "index6");
+        
+                // Retrieve metrics object without useless columns
+                if(typeof metrics.length === "undefined") return _.omit(metrics, omitTagsList);
+                else {
+                    purgedMetrics = [];
+    
+                    metrics.forEach(el =>purgedMetrics.push(_.omit(el, omitTagsList)));
+                    return purgedMetrics;
+                }
+            } else return new Error("Standard mode is not supported for now.");
+    } catch(e) { return new Error("Unable to remove useless columns. Trace: ", e); }
+}
+
+
+/**
+ * Return the tag/column relation with the database
+ * @param {String} tag 
+ */
+function tagRelation(tag) {
+
+}
+
+/**
+ * Return an object containing tag informations about the column name or the tag name
+ * @param {String} tag tag or column name
+ */
+function tagInformations(tag) {
+    if(tag.toLowerCase().includes("index") || tag.toLowerCase().includes("iinst")) {
+        // Get informations about column name
+
+        return {
+            tag: "",
+            db_relation: tag.toLowerCase(),
+            description: tagName(tag),
+            unit: tagUnit(tag)
+        }
+    } else {
+        // Get informations about tag name
+
+        return {
+            tag: tag.toLowerCase(),
+            db_relation: "",
+            description: tagName(tag),
+            unit: tagUnit(tag)
+        }
+    }
+
+
+    
+}
+
+
+module.exports = { threephasesToString, counterTypeToString, contractToString, contractMetricsTags, tagName, tagUnit, removeUselessColumns, tagRelation, tagInformations };

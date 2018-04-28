@@ -1,7 +1,7 @@
 var route   = require("express").Router(),
     _       = require("lodash"),
     Counter = require("../models/counters").Model,
-    HistoTelemetry = require("../../models/histoTelemetry").Model,    
+    HistoTelemetry = require("../models/histoTelemetry").Model,    
     colors  = require("colors")
 
 

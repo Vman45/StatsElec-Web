@@ -13,4 +13,5 @@ config/config.*.js
 # Specific to some tools (code coverage, documentation, dependencies)
 node_modules/
 .nyc_output/
+coverage/
 site/

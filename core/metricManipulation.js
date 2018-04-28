@@ -66,8 +66,7 @@ function createElectron(str, cb) {
 
 
         // Check if the install is in Threephases or in monophases
-        var threephase = isThreePhases(surgery);
-        if(threephase == true) electron.obj.info.threephases = true;
+        if(isThreePhases(surgery) == true) electron.obj.info.threephases = true;
         else electron.obj.info.threephases = false;
 
 
@@ -299,21 +298,10 @@ function isThreePhases(metric) {
     else return false;
 }
 
-/**
- * 
- * @param {*} type 
- */
-function contractChanged(type) {
-    
-    return false;
-}
-
-
 module.exports = { 
     createElectron,
     verifyChecksum,
     detectTICMode,
     detectContractType,
-    isThreePhases,
-    contractChanged
+    isThreePhases
 };

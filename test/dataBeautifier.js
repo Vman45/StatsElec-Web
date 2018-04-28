@@ -1,5 +1,6 @@
 var assert = require("assert"),
-    beautifier = require("../core/dataBeautifier");
+    beautifier = require("../core/dataBeautifier"),
+    util = require("util");
 
 describe("Test data Beautifier functions", () => {
     describe("#threephasesToString", () => {
@@ -32,5 +33,45 @@ describe("Test data Beautifier functions", () => {
         it("should return BBRHCJB (with RAiNbOW taG NoTATion)", () => assert.equal(beautifier.tagUnit("BBrHcjB"), "Wh"));
         it("should return null with ADCO", () => assert.equal(beautifier.tagUnit("ADCO"), null));
         it("should return null (random value)", () => assert.equal(beautifier.tagUnit("random"), null));
+    });
+
+    describe("#removeUselessColumns", () => {
+        it("should return single iinst and index1 (base contract)", () => {
+            var infos = { contract: "base", threephases: false, tic_mode: 0 },
+                datas = { counterId: "00000", index1: 153, index2: 0, index3: 0, index4: 0, index5: 0, index6: 0, iinst1: 12, iinst2: 0, iinst3: 0, received_at: 0 };
+
+                
+            assert.equal(Object.keys(beautifier.removeUselessColumns(infos, datas)).length, 4);
+        });
+        
+        it("should return three iinst and index1 and index2 (hchp contract)", () => {
+            var infos = { contract: "hchp", threephases: true, tic_mode: 0 },
+                datas = [ { counterId: "00000", index1: 566, index2: 120, index3: 0, index4: 0, index5: 0, index6: 0, iinst1: 12, iinst2: 11, iinst3: 13, received_at: 0 }];
+
+            
+            assert.equal(Object.keys(beautifier.removeUselessColumns(infos, datas)[0]).length, 7);
+        });
+
+        it("should return three iinst and all indexes (tempo contract)", () => {
+            var infos = { contract: "tempo", threephases: true, tic_mode: 0 },
+                datas = { counterId: "00000", index1: 566, index2: 120, index3: 0, index4: 0, index5: 0, index6: 0, iinst1: 12, iinst2: 11, iinst3: 13, received_at: 0 };
+
+            assert.equal(Object.keys(beautifier.removeUselessColumns(infos, datas)).length, 11);
+        });
+        
+        it("should return an error with standard counter", () => {
+            var infos = { contract: "base", threephases: false, tic_mode: 1 },
+                datas = { counterId: "00000", index1: 0, index2: 2, index3: 55, index4: 23, index5: 0, index6: 0, iinst1: 0, iinst2: 0, iinst3: 0, received_at: 0 };
+
+            assert.equal(util.isError(beautifier.removeUselessColumns(infos, datas)), true);
+        });
+        
+        it("should return an error with malformed data", () => {
+            var infos = { contract: "" },
+                datas = { counterId: "00000", index1: 0, index2: 2, index3: 55, index4: 23, index5: 0, index6: 0, iinst1: 0, iinst2: 0, iinst3: 0, received_at: 0 };
+
+                console.log(beautifier.removeUselessColumns(infos, datas))
+                assert.equal(util.isError(beautifier.removeUselessColumns(infos, datas)), true);
+        });
     });
 });
