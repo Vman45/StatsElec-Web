@@ -1,13 +1,9 @@
-// Update with your config settings.
+var config = require("./config/config");
 
 module.exports = {
     development: {
         client: 'pg',
-        connection: {
-            host: "127.0.0.1",
-            database: 'statselec',
-            user: 'postgres'
-        },
+        connection: config.db.dev,
         pool: {
             min: 2,
             max: 10
@@ -19,12 +15,8 @@ module.exports = {
     },
 
     staging: {
-        client: 'postgresql',
-        connection: {
-            database: 'my_db',
-            user: 'username',
-            password: 'password'
-        },
+        client: 'pg',
+        connection: config.db.staging,
         pool: {
             min: 2,
             max: 10
@@ -36,18 +28,15 @@ module.exports = {
     },
 
     production: {
-        client: 'postgresql',
-        connection: {
-            database: 'my_db',
-            user: 'username',
-            password: 'password'
-        },
+        client: 'pg',
+        connection: config.db.prod,
         pool: {
             min: 2,
             max: 10
         },
         migrations: {
-            tableName: 'knex_migrations'
+            tableName: 'migrations_history',
+            directory: './core/migrations'
         }
     }
 };
