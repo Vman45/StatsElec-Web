@@ -2,9 +2,23 @@ var express    = require("express"),
     bodyParser = require("body-parser"),
     pug        = require("pug"),
     colors     = require("colors"),
+    db         = require("./core/databaseConnector"),
     app        = express(),
 
     config;
+
+
+
+// Start migrations (and check if the database is accessible)
+console.log(colors.cyan("Testing the connection with the database and launch latest migrations"));
+
+db.knex.migrate.latest().then(migrations => {
+    if(migrations[1].length == 0) console.log(colors.green("No migrations available. Database up to date."));
+    else console.log(colors.green("Database updated with new migrations."));
+}).catch(err => {
+    console.error(colors.red("Unable to run migrations or connecting to the database. Trace: ", err));
+    process.exit(1);
+});
 
 
 // Try to open the configuration file
