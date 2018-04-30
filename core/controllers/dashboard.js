@@ -1,5 +1,4 @@
 var route   = require("express").Router(),
-    _       = require("lodash"),
     Counter = require("../models/counters").Model,
     HistoTelemetry = require("../models/histoTelemetry").Model,    
     colors  = require("colors")
@@ -13,9 +12,8 @@ route.get("/", (req, res) => {
     }
 
     // Retrieve last telemetries
-
     // Retrieve counters numbers
-    Counter.count("id").fetchAll(c => {
+    Counter.count("id").fetchAll().then(c => {
         console.log(c);
     });
     
@@ -32,8 +30,6 @@ route.get("/list", (req, res) => {
     Counter.fetchAll().then(c => {
         var counters = c.toJSON();
 
-        console.log(counters);
-        
         res.render("counterList", {
             siteOptions: {
                 pageTitle: "Liste des compteurs"
