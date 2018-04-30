@@ -70,8 +70,13 @@ describe("Test data Beautifier functions", () => {
             var infos = { contract: "" },
                 datas = { counterId: "00000", index1: 0, index2: 2, index3: 55, index4: 23, index5: 0, index6: 0, iinst1: 0, iinst2: 0, iinst3: 0, received_at: 0 };
 
-                console.log(beautifier.removeUselessColumns(infos, datas))
                 assert.equal(util.isError(beautifier.removeUselessColumns(infos, datas)), true);
+        });
+    });
+
+    describe("#tagInformations", () => {
+        it("should return informations about EJPHN tag", () => {
+            console.log(beautifier.tagInformations("ejphn", { contract: "hchp", tic_mode: 0, threephases: true }));
         });
     });
 });

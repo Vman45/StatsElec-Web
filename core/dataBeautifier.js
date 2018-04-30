@@ -40,46 +40,33 @@ function contractToString(value) {
 }
 
 /**
- * Give possible metrics tags and the link with the database column
+ * Give possible metrics tags with the contract type
  * @param {String} contract 
  * @param {Boolean} threephase 
  */
 function contractMetricsTags(contract, threephase) {
     switch(contract.toLowerCase()) {
         case "base":
-            var tags = [{ tag: "base", db: "index1" }];
+            var tags = [ "base" ];
             break;
 
         case "hchp":
-            var tags = [
-                { tag: "hchc", db: "index1" },
-                { tag: "hchp", db: "index2" }
-            ];
+            var tags = [ "hchc", "hchp" ];
             break;
 
         case "ejp": 
-            var tags = [
-                { tag: "ejphn",  db: "index1" },
-                { tag: "ejphpm", db: "index2" }
-            ];
+            var tags = [ "ejphn", "ejphpm" ];
             break;
 
         case "tempo":
-            var tags = [
-                { tag: "bbrhcjb", db: "index1" },
-                { tag: "bbrhpjb", db: "index2" },
-                { tag: "bbrhcjw", db: "index3" },
-                { tag: "bbrhpjw", db: "index4" },
-                { tag: "bbrhcjr", db: "index5" },
-                { tag: "bbrhpjr", db: "index6" }
-            ];
+            var tags = [ "bbrhcjb", "bbrhpjb", "bbrhcjw", "bbrhpjw", "bbrhcjr", "bbrhpjr" ];
             break;
 
         default: return `contrat inconnu (${contract})`;
     }
 
-    if(threephase == true) tags.push({ tag: "iinst1", db: "iinst1" }, { tag: "iinst2", db: "iinst2" }, { tag: "iinst3", db: "iinst3" });
-    else tags.push({ tag: "iinst", db: "iinst1" });
+    if(threephase == true) tags.push("iinst1", "iinst2", "iinst3");
+    else tags.push("iinst");
 
     return tags;
 }
@@ -206,41 +193,118 @@ function removeUselessColumns(counterInfo, metrics) {
 
 
 /**
- * Return the tag/column relation with the database
- * @param {String} tag 
- */
-function tagRelation(tag) {
-
-}
-
-/**
  * Return an object containing tag informations about the column name or the tag name
  * @param {String} tag tag or column name
+ * @param {Object} [infos] counter informations (needed for column->tag)
  */
-function tagInformations(tag) {
-    if(tag.toLowerCase().includes("index") || tag.toLowerCase().includes("iinst")) {
-        // Get informations about column name
+function tagInformations(tag, infos) {
+    var tagsInfos = {
+        tag: "",
+        db_relation: "",
+        description: "",
+        unit: ""
+    }
 
-        return {
-            tag: "",
-            db_relation: tag.toLowerCase(),
-            description: tagName(tag),
-            unit: tagUnit(tag)
+    
+    if(tag.toLowerCase().includes("index")) {
+        // Check if infos object contain all needed informations
+        if(typeof infos.contract === "undefined" || typeof infos.tic_mode === "undefined" || typeof infos.threephases === "undefined") return new Error("Some informations are not available into 'infos' argument");
+
+        // Check if the TIC_Mode is in Historical or in Standard mode
+        if(infos.tic_mode == 1) return new Error("Standard mode is not supported for now.");
+        else {
+            var columnName = infos.contract.toLowerCase();
+            
+            // Get informations about column name
+            switch(tag) {
+                case "index1":
+                    if(columnName == "base") tagsInfos.tag = "base";
+                    else if(columnName == "hchp") tagsInfos.tag = "hchc";
+                    else if(columnName == "ejp") tagsInfos.tag = "ejphn";
+                    else if(columnName == "tempo") tagsInfos.tag = "bbrhcjb";
+                    break;
+
+                    case "index2":
+                    if(columnName == "hchp") tagsInfos.tag = "hchp";
+                    else if(columnName == "ejp") tagsInfos.tag = "ejphpm";
+                    else if(columnName == "tempo") tagsInfos.tag = "bbrhpjb";
+                    break;
+                    
+                case "index3":
+                tagsInfos.tag = "bbrhcjw";
+                break;
+
+                case "index4":
+                    tagsInfos.tag = "bbrhpjw";
+                    break;
+                
+                    case "index5":
+                    tagsInfos.tag = "bbrhcjr";
+                    break;
+                    
+                    case "index6":
+                    tagsInfos.tag = "bbrhpjr";
+                    break;
+                
+                    default: return new Error("Column name not exists.");
+            }
+                
+            tagsInfos.db_relation = tag.toLowerCase();
+            tagsInfos.description = tagName(tagsInfos.tag);
+            tagsInfos.unit = tagUnit(tagsInfos.tag);
+
+            return tagsInfos;
         }
     } else {
         // Get informations about tag name
+        switch(tag.toLowerCase()) {
+            case "base":
+            case "hchc":
+            case "ejphn":
+            case "bbrhcjb":            
+                tagsInfos.db_relation = "index1"; break;
 
-        return {
-            tag: tag.toLowerCase(),
-            db_relation: "",
-            description: tagName(tag),
-            unit: tagUnit(tag)
+            case "hchp":
+            case "ejphpm":
+            case "bbrhpjb":
+                tagsInfos.db_relation = "index2"; break;
+
+            case "bbrhcjw":
+                tagsInfos.db_relation = "index3"; break;
+
+            case "bbrhpjw":
+                tagsInfos.db_relation = "index4"; break;
+
+            case "bbrhcjr":
+                tagsInfos.db_relation = "index5"; break;
+                
+            case "bbrhpjr":
+                tagsInfos.db_relation = "index6"; break;
+
+            case "iinst":
+            case "iinst1":
+            case "iinst2":
+            case "iinst3":
+                if(typeof infos.threephases === "undefined" || infos.threephases == false) {
+                    tagsInfos.tag = "iinst";
+                    tagsInfos.db_relation = "iinst1";
+                } else if(typeof infos.threephases !== "undefined" && infos.threephases == true && tag.toLowerCase() == "iinst") {
+                    tagsInfos.tag = "iinst1";
+                    tagsInfos.db_relation = "iinst1";
+                } else tagsInfos.db_relation = tag.toLowerCase();
+
+                break;
+
+            default: return new Error("Tag unrecognized.");
         }
+
+        tagsInfos.tag == "" ? tagsInfos.tag = tag.toLowerCase() : "";
+        tagsInfos.description = tagName(tagsInfos.tag);
+        tagsInfos.unit = tagUnit(tagsInfos.tag);
+
+        return tagsInfos;
     }
-
-
-    
 }
 
 
-module.exports = { threephasesToString, counterTypeToString, contractToString, contractMetricsTags, tagName, tagUnit, removeUselessColumns, tagRelation, tagInformations };
+module.exports = { threephasesToString, counterTypeToString, contractToString, contractMetricsTags, tagName, tagUnit, removeUselessColumns, tagInformations };
