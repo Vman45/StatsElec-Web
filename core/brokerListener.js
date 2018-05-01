@@ -8,7 +8,6 @@ var metrics        = require("./metricManipulation"),
 module.exports = (config) => {
     console.log(colors.yellow("Trying to connect to MQTT Broker..."));
 
-
     var stringBuilded = `mqtt://${config.mqtt.host}:`;
 
     if(typeof config.mqtt.port !== "undefined" || typeof config.mqtt.port !== "string" || config.mqtt.port != "") stringBuilded += config.mqtt.port;
@@ -55,12 +54,7 @@ module.exports = (config) => {
                                 
                                 insertTelemetry(electron); // Insert telemetry
                             }).catch(errAdd => console.error("An error is occured when we tried to add new counter. Trace:", errAdd));
-                        } else {
-                            var cinfo = r.toJSON();
-
-                            // Insert telemetry
-                            insertTelemetry(electron);
-                        }
+                        } else insertTelemetry(electron);
                     });
                 }
             });
@@ -71,15 +65,6 @@ module.exports = (config) => {
 
 // Function for inserting telemtry into the good table
 function insertTelemetry(electron) {
-    // Check the TIC Mode
-    var telemetry; 
-
-    // if(electron.info.tic_mode == 0) telemetry = HistoTelemetry.forge({
-    //     counterId: electron.data.counterId,
-    //     index1: electron.data.index2
-    // });
-    // else var telemetry = null;
-
     // Forge and save data into database
     new HistoTelemetry(electron.data).save().then(() => console.info(colors.green(`New telemetry from ${electron.info.id} has been added.`))).catch(err => console.error(colors.red(`Unable to add the telemetry from ${electron.info.id}. Trace: `, err)));
 }

@@ -104,25 +104,6 @@ function createElectron(str, cb) {
             });
         }
 
-
-        // Get apparent power
-        // surgery.forEach(key => {
-        //     if(key[0] == "PAPP") electron.obj.data.apparentPower = key[1];
-        // });
-
-
-        // // Get ADPS
-        // surgery.forEach(key => {
-        //     if(key[0] == "ADPS") electron.obj.data.adps = key[1];
-        // });
-        
-
-        // // Get actual billing mode
-        // surgery.forEach(key => {
-        //     if(key[0] == "PTEC") electron.obj.data.ptec = key[1];
-        // });
-
-
         return cb(null, electron.obj);
     } else if(typeof str === "object") {
         /**
