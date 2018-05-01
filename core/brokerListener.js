@@ -66,5 +66,7 @@ module.exports = (config) => {
 // Function for inserting telemtry into the good table
 function insertTelemetry(electron) {
     // Forge and save data into database
-    new HistoTelemetry(electron.data).save().then(() => console.info(colors.green(`New telemetry from ${electron.info.id} has been added.`))).catch(err => console.error(colors.red(`Unable to add the telemetry from ${electron.info.id}. Trace: `, err)));
+    new HistoTelemetry(electron.data).save().then(() => {
+        if(process.env.NODE_ENV.toLowerCase() == "development" || process.env.NODE_ENV.toLowerCase() == "stagging") console.info(colors.green(`New telemetry from ${electron.info.id} has been added.`));
+    }).catch(err => console.error(colors.red(`Unable to add the telemetry from ${electron.info.id}. Trace: `, err)));
 }

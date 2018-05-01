@@ -8,6 +8,7 @@ var express    = require("express"),
     config;
 
 
+console.info(colors.cyan(`Starting StatsElec in '${process.env.NODE_ENV.toLowerCase() || "development"}' mode.`));
 
 // Start migrations (and check if the database is accessible)
 console.log(colors.cyan("Testing the connection with the database and launch latest migrations"));
