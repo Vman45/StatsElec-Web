@@ -19,6 +19,7 @@ Pour suivre l'évolution du projet et de la milestone en cours (GitLab) : [https
 
 ## Incompatibilitées
 StatsElec est aujourd'hui incompatible avec les compteurs suivant :
+
  * Linky _en mode standard (nouveau contrat créé lors de la pose du compteur)_
  * EMERAUDE
  * SAPHIR
