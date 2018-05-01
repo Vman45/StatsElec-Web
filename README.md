@@ -4,6 +4,7 @@
 StatsElec est une interface web permettant de suivre la consommation électrique d'un ou plusieurs compteurs électriques _Enedis_.
 
 Lien d'accès à la documentation : [https://statselec.readthedocs.io/fr/latest/](https://statselec.readthedocs.io/fr/latest/)
+
 Pour suivre l'évolution du projet et de la milestone en cours (GitLab) : [https://git.ahh.si/themimitoof/StatsElec/boards](https://git.ahh.si/themimitoof/StatsElec/boards)
 
 ## Fonctionnalités
@@ -42,6 +43,8 @@ Pour les installations manuelles :
 
 
 ## Installation
+Nous vous invitons à suivre le guide dans notre documentation : [https://statselec.readthedocs.io/fr/latest/installation/](https://statselec.readthedocs.io/fr/latest/installation/)
+
 **Note :** Nous recommandons de déployer StatsElec dans Docker. Notre guide expliquera la démarche pour déployer sur Docker et non le déploiement manuel.
 
 Une fois que vous avez télécherger le dépôt, naviguez dans le dossier ```config``` et créez une copie du fichier ```config.sample.js```  et renommez-le en ```config.js```. La configuration pour Docker est déjà toute prête ! Si toutefois, vous souhaitez modifier des informations, pensez à bien changer les informations dans le fichier ```docker-compose.yml```.

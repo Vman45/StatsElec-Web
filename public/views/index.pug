@@ -6,12 +6,12 @@ block append content
             .stat        
                 .body.blue
                     h2 Consommation du jour
-                    span.data 0 kWh
+                    span.data !{data.todayConsumption} kWh
 
             .stat
                 .body.orange
                     h2 Consommation totale
-                    span.data 0 kWh
+                    span.data !{data.totalConsumption} kWh
 
             .stat
                 .body.purple
@@ -26,10 +26,10 @@ block append content
                 th Dernière métrique reçue
                 th(width="25%") 
             tbody
-                each telemetry in data.lastTelemetries
+                each telemetry in data.lastMetrics
                     tr
-                        td= telemetry.counterid
+                        td= telemetry.counterId
                         td 
-                            span.tag--primary= telemetry.timestamp.toLocaleString()
+                            span.tag--primary= telemetry.received_at.toLocaleString()
                         td
-                            a(href="/counter/" + telemetry.counterid) Voir la page du compteur
+                            a(href="/counter/" + telemetry.counterId) Voir la page du compteur
