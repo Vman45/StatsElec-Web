@@ -1,9 +1,10 @@
 # StatsElec
-[![Documentation Status](https://readthedocs.org/projects/statselec/badge/?version=latest)](http://statselec.readthedocs.io/fr/latest/?badge=latest) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FThemimitoof%2FStatsElec-Web.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FThemimitoof%2FStatsElec-Web?ref=badge_shield) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ad05641f1cf44b2eb3a550b450a70c32)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Themimitoof/StatsElec-Web&amp;utm_campaign=Badge_Grade) 
+[![pipeline status](https://git.ahh.si/themimitoof/StatsElec/badges/master/pipeline.svg)](https://git.ahh.si/themimitoof/StatsElec/commits/master) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ad05641f1cf44b2eb3a550b450a70c32)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Themimitoof/StatsElec-Web&amp;utm_campaign=Badge_Grade) [![Documentation Status](https://readthedocs.org/projects/statselec/badge/?version=latest)](http://statselec.readthedocs.io/fr/latest/?badge=latest) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FThemimitoof%2FStatsElec-Web.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FThemimitoof%2FStatsElec-Web?ref=badge_shield)
 
 StatsElec est une interface web permettant de suivre la consommation électrique d'un ou plusieurs compteurs électriques _Enedis_.
 
 Lien d'accès à la documentation : [https://statselec.readthedocs.io/fr/latest/](https://statselec.readthedocs.io/fr/latest/)
+Pour suivre l'évolution du projet et de la milestone en cours (GitLab) : [https://git.ahh.si/themimitoof/StatsElec/boards](https://git.ahh.si/themimitoof/StatsElec/boards)
 
 ## Fonctionnalités
  * Simple d'utilisation
@@ -54,10 +55,10 @@ Vous pouvez désormais entrer l'adresse ```http://localhost:8055``` dans votre n
 Si vous souhaitez lancer les tests unitaires, tapez la commande ```docker-compose run --rm web npm run test``` (docker) ou ```npm run test``` (déploiement manuel).
 
 
-# Contributions
+## Contributions
 Si vous souhaitez contribuer à l'amélioration de StatsElec, nous vous invitons à _fork_ le projet et de _merge request_ vos travaux. 
 
 Si vous avez détecter un problème ou si vous souhaitez apporter une suggestion, ouvrez un ticket.
 
-# Licences
+## Licences
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FThemimitoof%2FStatsElec-Web.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FThemimitoof%2FStatsElec-Web?ref=badge_large)

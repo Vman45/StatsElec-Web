@@ -2,4 +2,7 @@ site_name: StatsElec
 theme: material
 pages:
   - Accueil: index.md
-  - Test: test.md
+  - Pré-requis: prerequisites.md
+  - Installation: installation.md
+  - Utilisation : usage.md
+  - API: api.md
