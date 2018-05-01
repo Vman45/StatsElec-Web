@@ -1,41 +1,29 @@
 version: "3"
 
 services:
-        #web:
-        #build: .
-        #restart: always
-        # ports: 
-        #- 8055:8055
-        #volumes:
-        #- ./container_content/statselec:/opt/statselec/datasets
-        #links:
-        #- influx
-        #- broker
+  web:
+    build: .
+    restart: always
+    ports: 
+      - 8055:8055
+    links:
+      - db
+      - broker
 
   db:
     image: postgres:alpine
-    #restart: always
+    restart: always
     environment:
       - POSTGRES_DB=statselec
     ports:
       - 127.0.0.1:5432:5432
-    #volumes:
-    #  - ./container_content/psql:/var/lib/postgresql/data
+    # Comment this part if you don't wan't persistance data
+    volumes:
+      - ./container_content/psql:/var/lib/postgresql/data
 
   broker:
     image: eclipse-mosquitto:latest
-    #restart: always
+    restart: always
     ports:
       - 1883:1883
       - 9001:9001
-
-  # Uncomment this if you want to deploy Grafana in addition of the web interface
-  #grafana:
-  #  image: grafana/grafana
-  #  #restart: always
-  #  links:
-  #    - influx
-  #  ports:
-  #    - 8560:3000
-  #  volumes:
-  #    - ./container_content/grafana:/var/lib/grafana

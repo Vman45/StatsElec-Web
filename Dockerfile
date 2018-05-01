@@ -1,4 +1,5 @@
 FROM node:alpine
+LABEL maintainer="Michael Vieira <contact+dev[at]mvieira[dot]fr>"
 
 WORKDIR /opt/statselec
 COPY . /opt/statselec
