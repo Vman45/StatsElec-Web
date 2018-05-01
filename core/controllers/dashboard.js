@@ -11,18 +11,29 @@ route.get("/", (req, res) => {
         nbCounters: 0
     }
 
-    // Retrieve last telemetries
+    HistoTelemetry.fetchPage({ limit: 15 }).then(e => {
+        console.log(e);
+    })
     // Retrieve counters numbers
-    Counter.count("id").fetchAll().then(c => {
-        console.log(c);
+    Promise.all([ 
+        Counter.count("id") // Retrieve counters numbers
+        // Retrieve last telemetries
+    ]).then(r => {
+        console.log(r[1].toJSON())
+        
+        // Serve the file        
+        res.render("index", {
+            siteOptions: {
+                pageTitle: "Dashboard"
+            }, data: {
+                nbCounters: r[0],
+                todayConsumption: 0,
+                totalConsumption: 0,
+                lastMetrics: r[1].toJSON() 
+            }
+        });
     });
     
-    // Serve the file        
-    res.render("index", {
-        siteOptions: {
-            pageTitle: "Dashboard"
-        }, data: {}
-    });
 });
 
 

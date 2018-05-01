@@ -2,7 +2,7 @@ extends layout/main
 
 block append content
     .container.margin-25-top#counterPage
-        sections.grid-8.has-gutter
+        section.grid-8.has-gutter.counterInfos
             .col-7
                 h2 
                     i Compteur !{data.name}
@@ -10,7 +10,7 @@ block append content
                 ul.informations
                     li Localisation : 
                         i= data.localisation
-                    li Identifiant : 
+                    li#counterId Identifiant : 
                         i= data.id
                     li Type de compteur : 
                         i !{data.StrType} !{data.StrThreephases}
@@ -28,16 +28,4 @@ block append content
                 img(src="/assets/img/linky_counter.svg")
 
 
-        section.grid-2.has-gutter.margin-25-top
-            //- each counter in data.charts
-            //-     .col-half
-            //-         canvas(id="graph-" + counter width="100%" height="400" style="background: #fafafa")
-
-
-
-    
-block prepend javascript
-    script.
-        var infos   = !{JSON.stringify(data)};
-
-            
+        section.grid-1.has-gutter.margin-25-top#metrics         

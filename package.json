@@ -11,7 +11,7 @@
     "watch": "node_modules/.bin/webpack --mode development --watch"
   },
   "author": "Michael Vieira <contact+dev[at]mvieira[dot]fr>",
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "dependencies": {
     "body-parser": "^1.18.2",
     "bookshelf": "^0.13.3",

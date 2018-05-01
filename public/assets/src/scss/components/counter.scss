@@ -10,3 +10,16 @@
         padding-left: 1em;
     }
 }
+
+section#metrics {
+    div {
+        position: relative;
+        width: 100%;
+        height: 500px;
+    }
+
+    canvas.graphs {
+        background: #f9f9f9;
+        margin-bottom: 1em;
+    }
+}
