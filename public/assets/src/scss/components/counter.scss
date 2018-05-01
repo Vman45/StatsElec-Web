@@ -9,6 +9,13 @@
         list-style: none;
         padding-left: 1em;
     }
+
+    @media(max-width: 467px) {
+        img.counter {
+            width: 50%;
+            text-align: center;
+        }
+    }
 }
 
 section#metrics {
