@@ -4,11 +4,12 @@ var express    = require("express"),
     colors     = require("colors"),
     db         = require("./core/databaseConnector"),
     app        = express(),
+    env        = (typeof process.env.NODE_ENV !== "undefined") ? (process.env.NODE_ENV).toLowerCase() : "development",
 
     config;
 
 
-console.info(colors.cyan(`Starting StatsElec in '${process.env.NODE_ENV.toLowerCase() || "development"}' mode.`));
+console.info(colors.cyan(`Starting StatsElec in '${env}' mode.`));
 
 // Start migrations (and check if the database is accessible)
 console.log(colors.cyan("Testing the connection with the database and launch latest migrations"));
