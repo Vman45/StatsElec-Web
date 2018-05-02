@@ -74,9 +74,19 @@ describe("Test data Beautifier functions", () => {
         });
     });
 
+    describe("#contractMetricsTags", () => {
+        it("should return 2 tags (base contract, monophase)", () => assert.equal(beautifier.contractMetricsTags("base", false).length, 2));
+        it("should return 5 tags (hchp contract, triphase)", () => assert.equal(beautifier.contractMetricsTags("hchp", true).length, 5));
+        it("should return 7 tags (tempo contract, monophase)", () => assert.equal(beautifier.contractMetricsTags("tempo", false).length, 7));
+        it("should return an error string", () => assert.equal(typeof beautifier.contractMetricsTags("dododo", false), "string"));
+    });
+
     describe("#tagInformations", () => {
-        it("should return informations about EJPHN tag", () => {
-            console.log(beautifier.tagInformations("ejphn", { contract: "hchp", tic_mode: 0, threephases: true }));
-        });
+        it("should return informations about EJPHN tag", () => assert.equal(beautifier.tagInformations("ejphn", { contract: "hchp", tic_mode: 0, threephases: true }).db_relation, "index1"));
+        it("should return informations about IINST2 tag", () => assert.equal(beautifier.tagInformations("iinst2", { contract: "hchp", tic_mode: 0, threephases: true }).db_relation, "iinst2"));
+        it("should return informations about IINST with IINST2 tag (monophase installation)", () => assert.equal(beautifier.tagInformations("iinst2", { contract: "hchp", tic_mode: 0, threephases: false }).tag, "iinst"));
+        it("should return informations about index1 column ", () => assert.equal(beautifier.tagInformations("index1", { contract: "hchp", tic_mode: 0, threephases: false }).tag, "hchc"));
+        it("should return an error with standard mode ", () => assert.equal(util.isError(beautifier.tagInformations("index1", { contract: "hchp", tic_mode: 1, threephases: false })), true));
+        it("should return an error with unknown tag/column name", () => assert.equal(util.isError(beautifier.tagInformations("indexoooo", { contract: "hchp", tic_mode: 0, threephases: false })), true));
     });
 });

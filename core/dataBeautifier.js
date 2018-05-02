@@ -224,7 +224,7 @@ function tagInformations(tag, infos) {
                     else if(columnName == "tempo") tagsInfos.tag = "bbrhcjb";
                     break;
 
-                    case "index2":
+                case "index2":
                     if(columnName == "hchp") tagsInfos.tag = "hchp";
                     else if(columnName == "ejp") tagsInfos.tag = "ejphpm";
                     else if(columnName == "tempo") tagsInfos.tag = "bbrhpjb";
@@ -238,15 +238,15 @@ function tagInformations(tag, infos) {
                     tagsInfos.tag = "bbrhpjw";
                     break;
                 
-                    case "index5":
+                case "index5":
                     tagsInfos.tag = "bbrhcjr";
                     break;
-                    
-                    case "index6":
+                
+                case "index6":
                     tagsInfos.tag = "bbrhpjr";
                     break;
                 
-                    default: return new Error("Column name not exists.");
+                default: return new Error("Column name not exists.");
             }
                 
             tagsInfos.db_relation = tag.toLowerCase();
